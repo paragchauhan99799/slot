@@ -1,0 +1,10 @@
+{
+  "name": "slotapp",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "css-toggle-switch": "^4.0.2",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.5"
+  }
+}
