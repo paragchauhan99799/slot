@@ -10,16 +10,24 @@ var controllercourseInfo = require('./controller/courseInfo');
 var port=process.env.PORT || 3000
 var router = express.Router();
 
-var mongoURI = "mongodb://localhost:27017/slot";
+var mongoURI = "mongodb://127.0.0.1:27017/slot";
 var MongoDB = mongoose.connect(mongoURI).connection;
 var http = require('http').Server(app);
 
-MongoDB.on('error', function(err) { 
+MongoDB.on('error', function(err) {
 	console.log("MOngoDB is connected "+err.message); 
 });
 
 MongoDB.once('open', function() {
     console.log("MongoDB connection open ");
+});
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Length");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header("Access-Control-Allow-Credentials", "true");
+    next();
 });
 
 app.use(bodyParser.urlencoded({
@@ -38,7 +46,7 @@ router.route('/courseinfo')
 	.post(controllercourseInfo.postnewcourseinfo)
 	.get(controllercourseInfo.getallcourseinfo);
 
-router.route('/courseinfo/:courseinfo_id')
+router.route('/consoleurseinfo/:courseinfo_id')
 	.delete(controllercourseInfo.deletecourseinfo);
 
 router.route('/courseinfo/courseCode/:courseCode')

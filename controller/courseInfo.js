@@ -22,11 +22,12 @@ exports.getallcourseinfo = function(req,res){
 		if(err)
 			return res.json({message:'some thing wrong'});
 		
-		var resp={ 
+/*		var resp={ 
 			results:courseinfo
-		};
+		};*/
 
-		res.json(resp);
+		res.json(courseinfo);
+	/*	res.json(resp);*/
 	});
 };
 
@@ -35,8 +36,9 @@ exports.getspecificourseCode = function(req,res){
 		if(err)
 			res.send(err);
 
-		var resp={results:courseinfo};
-			res.json(resp);
+	/*	var resp={results:courseinfo};*/
+
+			res.json(courseinfo);
 	});
 };
 
@@ -45,8 +47,9 @@ exports.getspecificprofShortName = function(req,res){
 		if(err)
 			res.send(err);
 
-		var resp={results:courseinfo};
-			res.json(resp);
+/*		var resp={results:courseinfo};*/
+
+			res.json(courseinfo);
 	});
 };
 

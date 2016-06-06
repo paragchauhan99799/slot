@@ -18,11 +18,12 @@ exports.getallprof = function(req,res){
 	Prof.find(function(err,prof) {
 		if(err)
 			return res.json({message:'some thing wrong'});
-		
+/*		
 		var resp={ 
 			results:prof
 		};
-		
-		res.json(resp);
+		*/
+
+		res.json(prof);
 	});
 };

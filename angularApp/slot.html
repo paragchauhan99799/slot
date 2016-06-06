@@ -1,6 +1,122 @@
 <body ng-app="slotapp">
 <div ng-controller="slotclr"> 
-       <p>slot page</p>
        <button ng-click="next()">Next</button>
+
+       <div>
+			<table border="1">
+				<!-- <tr>B.Tech:1</tr>
+				<tr>B.Tech:2</tr>
+				<tr>B.Tech:3</tr>
+				<tr>B.Tech:4</tr>
+				<tr>M.Tech:1</tr>
+				<tr>M.Tech:2</tr>
+				<tr>M.ScIT:1</tr>
+				<tr>M.ScIT:2</tr>
+			 -->
+				<tr>
+					<td></td>
+					<td>Slot 1</td>
+					<td>Slot 2</td>
+					<td>Slot 3</td>
+					<td>Slot 4</td>
+					<td>Slot 5</td>
+					<td>Slot 6</td>
+					<td>Slot 7</td>
+				</tr>
+	
+				<tr>
+					<td>
+						B.Tech1
+					</td>				
+					<!-- Slot1 -->
+					<td>
+						<table>
+							<tr ng-repeat="x in slot1 track by $index">
+								<td>{{x.courseCode}}</td>
+								<td>{{x.profShortName}}</td>
+								<td>{{x.year}}</td>
+								<td>{{x.field}}</td>							
+							</tr>
+						</table>
+					</td>
+					<!-- Slot2 -->
+					<td>
+						<table>
+							<tr ng-repeat="x in slot2 track by $index">
+								<td>{{x.courseCode}}</td>
+								<td>{{x.profShortName}}</td>
+								<td>{{x.field}}</td>							
+							</tr>
+						</table>
+					</td>
+					<!-- Slot3 -->
+					<td>
+						<table>
+							<tr ng-repeat="x in slot3 track by $index">
+								<td>{{x.courseCode}}</td>
+								<td>{{x.profShortName}}</td>
+								<td>{{x.field}}</td>							
+							</tr>
+						</table>
+					</td>
+					<!-- Slot4 -->
+					<td>
+						<table>
+							<tr ng-repeat="x in slot4 track by $index">
+								<td>{{x.courseCode}}</td>
+								<td>{{x.profShortName}}</td>
+								<td>{{x.field}}</td>							
+							</tr>
+						</table>
+					</td>
+					<!-- Slot5 -->
+					<td>
+						<table>
+							<tr ng-repeat="x in slot5 track by $index">
+								<td>{{x.courseCode}}</td>
+								<td>{{x.profShortName}}</td>
+								<td>{{x.field}}</td>							
+							</tr>
+						</table>
+					</td>
+					<!-- Slot6 -->
+					<td>
+						<table>
+							<tr ng-repeat="x in slot6 track by $index">
+								<td>{{x.courseCode}}</td>
+								<td>{{x.profShortName}}</td>
+								<td>{{x.year}}</td>
+								<td>{{x.field}}</td>							
+							</tr>
+						</table>
+					</td>
+					<!-- Slot7 -->
+					<td>
+						<table>
+							<tr ng-repeat="x in slot7 track by $index">
+								<td>{{x.courseCode}}</td>
+								<td>{{x.profShortName}}</td>
+								<td>{{x.year}}</td>
+								<td>{{x.field}}</td>							
+							</tr>
+						</table>
+					</td>
+				</tr>
+	
+			</table>
+       </div>
 </div>
+<style>
+	table,th,td{
+		border: 1px solid grey;
+		border-collapse: collapse;
+		padding: 5px;
+	}
+	table tr:nth-child(odd){
+		background-color: #f2f2f2; 
+	}
+	table tr:nth-child(even){
+		background-color: #ffffff; 
+	}
+</style>
 </body>   
