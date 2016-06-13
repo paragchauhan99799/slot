@@ -15,6 +15,9 @@ var courseInfoSchema = new mongoose.Schema({
 	},
 	field : {
 		type : String,
+	},
+	courseName : {
+		type : String,
 	}
 	
 });

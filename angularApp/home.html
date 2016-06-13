@@ -1,12 +1,13 @@
 <body ng-app = "slotapp">
 	<div ng-controller = "homeclr"> 
        <h2>Course Information</h2>
-       <div>
+             <div>
        		<table border="1">
        			<tr>
        				<td>Course Code</td>
        				<td>Prof Name</td>
        				<td>Course Type</td>
+                              <td>Course Name</td>
        				<td>Year</td>
        				<td>Field</td>
        			</tr>
@@ -14,11 +15,26 @@
        				<td>{{x.courseCode}}</td>
        				<td>{{x.profShortName}}</td>
        				<td>{{x.courseType}}</td>
+                              <td>{{x.courseName}}</td>
        				<td>{{x.year}}</td>
        				<td>{{x.field}}</td>
-       			</tr>
+                        </tr>
        		</table>
-       </div>
+            </div>
+                  
+            <div>
+                  <table>
+                        <tr>
+                              <td>ProfShortName</td>
+                               <td>Prof Name</td>   
+                        </tr>
+                        <tr ng-repeat="y in profinfo">
+                              <td>{{y.profShortName}}</td>
+                              <td>{{y.profName}}</td> 
+                        </tr>
+                  </table>
+
+            </div>
       <button ng-click="next()">Next</button>
 
     </div>

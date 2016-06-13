@@ -3,109 +3,180 @@
        <button ng-click="next()">Next</button>
 
        <div>
-			<table border="1">
-				<!-- <tr>B.Tech:1</tr>
-				<tr>B.Tech:2</tr>
-				<tr>B.Tech:3</tr>
-				<tr>B.Tech:4</tr>
-				<tr>M.Tech:1</tr>
-				<tr>M.Tech:2</tr>
-				<tr>M.ScIT:1</tr>
-				<tr>M.ScIT:2</tr>
-			 -->
-				<tr>
-					<td></td>
-					<td>Slot 1</td>
-					<td>Slot 2</td>
-					<td>Slot 3</td>
-					<td>Slot 4</td>
-					<td>Slot 5</td>
-					<td>Slot 6</td>
-					<td>Slot 7</td>
-				</tr>
+
+       <table>
+       		<tr>
+       			<td>Index</td><td>Slot 1</td><td>Slot 2</td><td>Slot 3</td><td>Slot 4</td><td>Slot 5</td><td>Slot 6</td><td>Slot 7</td>
+       		</tr>
+       			
+       		<tr>
+       			<td>BTECH1</td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>BTECH2</td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>BTECH3</td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>BTECH4</td>
+       			<td><table><tr ng-repeat="x in slot.BTECH4.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH4.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH4.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH4.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH4.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH4.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH4.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>MTECH1</td>
+       			<td><table><tr ng-repeat="x in slot.MTECH1.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH1.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH1.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH1.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH1.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH1.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH1.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>MTECH2</td>
+       			<td><table><tr ng-repeat="x in slot.MTECH2.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH2.slot2 track by $index"><td>{{x.courseCode}}</td><<td>{{x.courseName}}</td>td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH2.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH2.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH2.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH2.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MTECH2.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>MSCIT1</td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT1.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT1.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT1.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT1.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT1.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT1.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT1.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>MSCIT2</td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT2.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT2.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT2.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT2.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT2.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT2.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCIT2.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>MSCARD1</td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD1.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD1.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD1.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD1.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD1.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD1.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD1.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>MSCARD2</td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD2.slot1 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD2.slot2 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD2.slot3 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD2.slot4 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD2.slot5 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD2.slot6 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MSCARD2.slot7 track by $index"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>MDES1</td>
+       			<td><table><tr ng-repeat="x in slot.MDES1.slot1"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES1.slot2"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES1.slot3"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES1.slot4"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES1.slot5"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES1.slot6"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES1.slot7"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>MDES2</td>
+       			<td><table><tr ng-repeat="x in slot.MDES2.slot1"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES2.slot2"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES2.slot3"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES2.slot4"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES2.slot5"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES2.slot6"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.MDES2.slot7"><td>{{x.courseCode}}</td><td>{{x.courseName}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       </table>
+       <br><br>
+     
+     <!--   <table>
+       		<tr>
+       			<td>Index</td><td>Slot 5</td><td>Slot 6</td><td>Slot 7</td>
+       		</tr>
+       			
+       		<tr>
+       			<td>BTECH1</td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot5"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot6"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH1.slot7"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>BTECH2</td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot5"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot6"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH2.slot7"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
+
+       		<tr>
+       			<td>BTECH3</td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot5"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot6"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       			<td><table><tr ng-repeat="x in slot.BTECH3.slot7"><td>{{x.courseCode}}</td><td>{{x.courseType}}</td><td>{{x.profShortName}}</td></tr></table></td>
+       		</tr>
 	
-				<tr>
-					<td>
-						B.Tech1
-					</td>				
-					<!-- Slot1 -->
-					<td>
-						<table>
-							<tr ng-repeat="x in slot1 track by $index">
-								<td>{{x.courseCode}}</td>
-								<td>{{x.profShortName}}</td>
-								<td>{{x.year}}</td>
-								<td>{{x.field}}</td>							
-							</tr>
-						</table>
-					</td>
-					<!-- Slot2 -->
-					<td>
-						<table>
-							<tr ng-repeat="x in slot2 track by $index">
-								<td>{{x.courseCode}}</td>
-								<td>{{x.profShortName}}</td>
-								<td>{{x.field}}</td>							
-							</tr>
-						</table>
-					</td>
-					<!-- Slot3 -->
-					<td>
-						<table>
-							<tr ng-repeat="x in slot3 track by $index">
-								<td>{{x.courseCode}}</td>
-								<td>{{x.profShortName}}</td>
-								<td>{{x.field}}</td>							
-							</tr>
-						</table>
-					</td>
-					<!-- Slot4 -->
-					<td>
-						<table>
-							<tr ng-repeat="x in slot4 track by $index">
-								<td>{{x.courseCode}}</td>
-								<td>{{x.profShortName}}</td>
-								<td>{{x.field}}</td>							
-							</tr>
-						</table>
-					</td>
-					<!-- Slot5 -->
-					<td>
-						<table>
-							<tr ng-repeat="x in slot5 track by $index">
-								<td>{{x.courseCode}}</td>
-								<td>{{x.profShortName}}</td>
-								<td>{{x.field}}</td>							
-							</tr>
-						</table>
-					</td>
-					<!-- Slot6 -->
-					<td>
-						<table>
-							<tr ng-repeat="x in slot6 track by $index">
-								<td>{{x.courseCode}}</td>
-								<td>{{x.profShortName}}</td>
-								<td>{{x.year}}</td>
-								<td>{{x.field}}</td>							
-							</tr>
-						</table>
-					</td>
-					<!-- Slot7 -->
-					<td>
-						<table>
-							<tr ng-repeat="x in slot7 track by $index">
-								<td>{{x.courseCode}}</td>
-								<td>{{x.profShortName}}</td>
-								<td>{{x.year}}</td>
-								<td>{{x.field}}</td>							
-							</tr>
-						</table>
-					</td>
-				</tr>
-	
-			</table>
+       </table>
+ -->
        </div>
 </div>
+
+
+
 <style>
 	table,th,td{
 		border: 1px solid grey;

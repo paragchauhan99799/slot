@@ -27,3 +27,12 @@ exports.getallprof = function(req,res){
 		res.json(prof);
 	});
 };
+
+exports.deleteprofinfo = function(req, res) {		
+    Prof.findByIdAndRemove( req.params.prof_id , function(err) {
+   		if (err)
+      		return res.json({message:'some thing wrong:'});
+
+    	res.json({ message: 'profinfo removed from the database!' });
+  	});
+};

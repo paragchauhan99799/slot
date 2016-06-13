@@ -30,6 +30,7 @@ app.use(function(req, res, next) {
     next();
 });
 
+
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -46,12 +47,21 @@ router.route('/courseinfo')
 	.post(controllercourseInfo.postnewcourseinfo)
 	.get(controllercourseInfo.getallcourseinfo);
 
-router.route('/consoleurseinfo/:courseinfo_id')
+router.route('/courseinfo/:course_id')
+	.put(controllercourseInfo.updatecourseinfo)
+
+router.route('/courseinfodelete/:courseinfo_id')
 	.delete(controllercourseInfo.deletecourseinfo);
+
+router.route('/profdelete/:prof_id')
+	.delete(controllerProf.deleteprofinfo);
 
 router.route('/courseinfo/courseCode/:courseCode')
 	.get(controllercourseInfo.getspecificourseCode);
 
+router.route('/courseinfo/courseType/:courseType')
+	.get(controllercourseInfo.getspecificcourseType);
+	
 router.route('/courseinfo/profShortName/:profShortName')
 	.get(controllercourseInfo.getspecificprofShortName);
 

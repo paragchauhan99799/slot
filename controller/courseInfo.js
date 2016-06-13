@@ -8,7 +8,8 @@ exports.postnewcourseinfo = function(req,res){
 	courseinfo.courseType = req.body.courseType;
 	courseinfo.year = req.body.year;
 	courseinfo.field = req.body.field;
-	
+	courseinfo.courseName = req.body.courseName;
+
 	courseinfo.save(function(err){
 		if(err)
 			return res.json({message:'some thing wrong'});
@@ -22,12 +23,8 @@ exports.getallcourseinfo = function(req,res){
 		if(err)
 			return res.json({message:'some thing wrong'});
 		
-/*		var resp={ 
-			results:courseinfo
-		};*/
-
 		res.json(courseinfo);
-	/*	res.json(resp);*/
+	
 	});
 };
 
@@ -36,7 +33,7 @@ exports.getspecificourseCode = function(req,res){
 		if(err)
 			res.send(err);
 
-	/*	var resp={results:courseinfo};*/
+
 
 			res.json(courseinfo);
 	});
@@ -47,7 +44,15 @@ exports.getspecificprofShortName = function(req,res){
 		if(err)
 			res.send(err);
 
-/*		var resp={results:courseinfo};*/
+
+			res.json(courseinfo);
+	});
+};
+
+exports.getspecificcourseType = function(req,res){
+	courseInfo.find({courseType : req.params.courseType },function(err,courseinfo){
+		if(err)
+			res.send(err);
 
 			res.json(courseinfo);
 	});
@@ -59,5 +64,22 @@ exports.deletecourseinfo = function(req, res) {
       		return res.json({message:'some thing wrong:'});
 
     	res.json({ message: 'courseinfo removed from the database!' });
+  	});
+};
+
+exports.updatecourseinfo = function(req, res) {		
+    
+    courseInfo.find({courseCode:req.params.courseCode}, function(err,courseinfo) {
+   		if (err)
+      		return res.json({message:'some thing wrong:'});
+
+      	courseinfo.field = req.body.field;
+
+      	courseinfo.save(function(err){
+			if(err)
+				return res.json({message:'some thing wrong'});
+
+				res.json({ message:'courseInfo added:'+ courseinfo});
+		});
   	});
 };
