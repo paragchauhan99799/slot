@@ -64,7 +64,7 @@ app.controller('homeclr', function($scope,$state,$http){
 app.controller('autumnclr', function($scope,$state,$http){
 	$scope.courseinfo;
 
-	$http.get("http://localhost:3000/home/courseinfo/").success(function(response){
+	$http.get("home/courseinfo/").success(function(response){
 		$scope.courseinfo = response;
 	});
 
@@ -85,7 +85,7 @@ app.controller('autumnclr', function($scope,$state,$http){
 app.controller('winterclr', function($scope,$state,$http){
 	$scope.courseinfo;
 
-	$http.get("http://localhost:3000/home/courseinfo/").success(function(response){
+	$http.get("home/courseinfo/").success(function(response){
 		$scope.courseinfo = response;
 	});
 
@@ -100,7 +100,7 @@ app.controller('deleteautumncourseclr', function($scope,$state,$http){
 	$scope.delete = function(){
 			/*console.log($scope.courseCode);
 */
-			$http.get("http://localhost:3000/home/courseinfo/").success(function(response){
+			$http.get("home/courseinfo/").success(function(response){
 				$scope.courseinfo = response;
 
 				var resp = {
@@ -112,7 +112,7 @@ app.controller('deleteautumncourseclr', function($scope,$state,$http){
 						console.log(resp.results[i]._id);
 
 						var idnum = resp.results[i]._id;
-						var url = "http://localhost:3000/home/courseinfodelete/"+idnum;
+						var url = "home/courseinfodelete/"+idnum;
 
 						$http.delete(url).success(function(response){
 							console.log("delete");
@@ -131,17 +131,18 @@ app.controller('deleteautumncourseclr', function($scope,$state,$http){
 			$state.go('autumn',{ reload: true });
 	};
 
-	$http.get("http://localhost:3000/home/courseinfo/").success(function(response){
+	$http.get("home/courseinfo/").success(function(response){
 		$scope.courseinfo = response;
 	});
 });
 
 app.controller('addautumncourseclr', function($scope,$state,$http){
+	console.log("add course");
 
 	$scope.submit = function(){
 		console.log("Couser add");
 		$http({
-			    url: "http://localhost:3000/home/courseinfo",
+			    url: "home/courseinfo",
 			    method: "POST",
 			    data: {courseName: $scope.courseName,courseCode: $scope.courseCode,profShortName: $scope.profShortName, field: $scope.field , year:$scope.year,courseType:$scope.courseType}
 			}).success(function(data){
@@ -308,7 +309,7 @@ app.controller('slotclr',function($scope,$state,$http){
 
 	///////////////////////////////////////..............................If prof has two course................///////////////////////////////////////////
 	
-	$http.get("http://localhost:3000/home/prof/").success(function(response){			
+	$http.get("home/prof/").success(function(response){			
 			var resp = {
 				results : response
 			}
@@ -316,7 +317,7 @@ app.controller('slotclr',function($scope,$state,$http){
 			resp.results = $scope.shuffle(resp.results);
 
 			for(var j = 0 ; j < resp.results.length ; j++){
-				var path = "http://localhost:3000/home/courseinfo/profShortName/"+resp.results[j].profShortName;
+				var path = "home/courseinfo/profShortName/"+resp.results[j].profShortName;
 				
 				$http.get(path).success(function(response){
 					var respo = {
@@ -371,7 +372,7 @@ app.controller('slotclr',function($scope,$state,$http){
 	});
 
 	///////////////////////////////.....................CORE COURSE.....................///////////////////////////
-	$http.get("http://localhost:3000/home/prof/").success(function(response){			
+	$http.get("home/prof/").success(function(response){			
 			var prof = {
 				results : response
 			}
@@ -379,7 +380,7 @@ app.controller('slotclr',function($scope,$state,$http){
 			prof.results = $scope.shuffle(prof.results);
 
 			for(var j = 0 ; j < prof.results.length ; j++){
-				var path = "http://localhost:3000/home/courseinfo/profShortName/"+prof.results[j].profShortName;
+				var path = "home/courseinfo/profShortName/"+prof.results[j].profShortName;
 			
 				$http.get(path).success(function(response){
 					var coreprof = {
@@ -396,7 +397,7 @@ app.controller('slotclr',function($scope,$state,$http){
 
 	///////////////////////////////.....................other COURSE.....................///////////////////////////
 	
-	$http.get("http://localhost:3000/home/prof/").success(function(response){			
+	$http.get("home/prof/").success(function(response){			
 		var othercourseprof = {
 			results : response
 		}
@@ -404,7 +405,7 @@ app.controller('slotclr',function($scope,$state,$http){
 		othercourseprof.results = $scope.shuffle(othercourseprof.results);
 
 		for(var k = 0 ; k < othercourseprof.results.length ; k++){
-			var path = "http://localhost:3000/home/courseinfo/profShortName/"+othercourseprof.results[k].profShortName;
+			var path = "home/courseinfo/profShortName/"+othercourseprof.results[k].profShortName;
 			
 			$http.get(path).success(function(response){
 				var otherprof = {
