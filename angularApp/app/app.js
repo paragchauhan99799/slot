@@ -11,27 +11,153 @@ app.config(['$stateProvider','$urlRouterProvider',
 			}).state('slot', {
 				url: "/sot",
 				templateUrl: "slot.html",
+			}).state('autumn', {
+				url: "/autumn",
+				templateUrl: "autumn.html",
+			}).state('winter', {
+				url: "/winter",
+				templateUrl: "winter.html",
+			}).state('addautumncourse', {
+				url: "/addautumncourse",
+				templateUrl: "addautumncourse.htm",
+			}).state('addwintercourse', {
+				url: "/addwintercourse",
+				templateUrl: "addwintercourse.htm",
+			}).state('autumnslot', {
+				url: "/autumnslot",
+				templateUrl: "autumnslot.html",
+			}).state('timetable', {
+				url: "/timetable",
+				templateUrl: "timetable.html",
+			}).state('deleteautumncourse', {
+				url: "/deleteautumncourse",
+				templateUrl: "deleteautumncourse.html",
+			}).state('addprofessor', {
+				url: "/addprofessor",
+				templateUrl: "addprofessor.html",
 			})
+
+
 		}
 ]);
 
 
 app.controller('homeclr', function($scope,$state,$http){
+	$scope.autumn = function(){
+			$state.go('autumn');
+	};
+
+	$scope.winter = function(){
+			$state.go('winter');
+	};
+
+	$scope.professor = function(){
+			$state.go('addprofessor');
+	};
+
+	$scope.timetable = function(){
+			$state.go('timetable');
+	};
+
+});
+
+app.controller('autumnclr', function($scope,$state,$http){
 	$scope.courseinfo;
+
 	$http.get("http://localhost:3000/home/courseinfo/").success(function(response){
-		$scope.courseinfo = response
+		$scope.courseinfo = response;
 	});
 
-	$scope.profinfo;
-	$http.get("http://localhost:3000/home/prof/").success(function(response1){
-		$scope.profinfo = response1
+	$scope.addautumncourse = function(){
+			$state.go('addautumncourse');
+	};
+
+	$scope.createtimetable = function(){
+			$state.go('autumnslot');
+	};
+
+	$scope.delete = function(){
+			$state.go('deleteautumncourse');
+	};
+	
+});
+
+app.controller('winterclr', function($scope,$state,$http){
+	$scope.courseinfo;
+
+	$http.get("http://localhost:3000/home/courseinfo/").success(function(response){
+		$scope.courseinfo = response;
 	});
 
-	$scope.next = function(){
-			$state.go('slot');
+	$scope.addwintercourse = function(){
+			$state.go('addwintercourse');
 	};
 });
 
+app.controller('deleteautumncourseclr', function($scope,$state,$http){
+	$scope.courseCode;
+	
+	$scope.delete = function(){
+			/*console.log($scope.courseCode);
+*/
+			$http.get("http://localhost:3000/home/courseinfo/").success(function(response){
+				$scope.courseinfo = response;
+
+				var resp = {
+					results : response
+				}
+
+				for(var i =0;i<resp.results.length;i++){
+					if($scope.courseCode==resp.results[i].courseCode){
+						console.log(resp.results[i]._id);
+
+						var idnum = resp.results[i]._id;
+						var url = "http://localhost:3000/home/courseinfodelete/"+idnum;
+
+						$http.delete(url).success(function(response){
+							console.log("delete");
+						});
+
+						break;
+					}
+					else{
+						if(i==resp.results.length-1){
+							console.log(i+" "+"Not Found"+" "+$scope.courseCode);
+						}
+					}
+				}
+			});
+
+			$state.go('autumn',{ reload: true });
+	};
+
+	$http.get("http://localhost:3000/home/courseinfo/").success(function(response){
+		$scope.courseinfo = response;
+	});
+});
+
+app.controller('addautumncourseclr', function($scope,$state,$http){
+
+	$scope.submit = function(){
+		console.log("Couser add");
+		$http({
+			    url: "http://localhost:3000/home/courseinfo",
+			    method: "POST",
+			    data: {courseName: $scope.courseName,courseCode: $scope.courseCode,profShortName: $scope.profShortName, field: $scope.field , year:$scope.year,courseType:$scope.courseType}
+			}).success(function(data){
+				$state.go('autumn');
+			  	// alert('success post');
+			}).error(function(){
+				Materialize.toast("Error", 3000);
+			  	// alert('error');
+			  	console.log(err);
+			});
+	}
+});
+
+app.controller('addwintercourseclr', function($scope,$state,$http){
+	
+});
 
 app.controller('slotclr',function($scope,$state,$http){
 	
@@ -178,7 +304,7 @@ app.controller('slotclr',function($scope,$state,$http){
 	var submard2slot5 = [];submard2slot5[0]=0;$scope.slot.MSCARD2.slot5 =submard2slot5;
 	var submard2slot6 = [];submard2slot6[0]=0;$scope.slot.MSCARD2.slot6 =submard2slot6;
 	var submard2slot7 = [];submard2slot7[0]=0;$scope.slot.MSCARD2.slot7 =submard2slot7;
-	
+
 
 	///////////////////////////////////////..............................If prof has two course................///////////////////////////////////////////
 	
@@ -186,6 +312,8 @@ app.controller('slotclr',function($scope,$state,$http){
 			var resp = {
 				results : response
 			}
+
+			resp.results = $scope.shuffle(resp.results);
 
 			for(var j = 0 ; j < resp.results.length ; j++){
 				var path = "http://localhost:3000/home/courseinfo/profShortName/"+resp.results[j].profShortName;
@@ -195,649 +323,60 @@ app.controller('slotclr',function($scope,$state,$http){
 						results : response
 					}
 
-					if(respo.results.length==2 && respo.results[0].courseCode!=respo.results[1].courseCode){
-						if(respo.results[0].courseType=='CORE' && respo.results[1].courseType=='CORE'){
-							console.log("CORE and CORE"+respo.results[0].profShortName+" "+respo.results[1].profShortName);
-
-							if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0])==0){
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot5"][0] = respo.results[0];
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot6"][0] = respo.results[1];
-							}
-							else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0]) == 0){
-								$scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0] = respo.results[0];
-								$scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0] = respo.results[1];
-							}
-								else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0]) == 0){
-									$scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0] = respo.results[0];
-									$scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0] = respo.results[1];
-								}
-								else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0]) == 0){
-									$scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0] = respo.results[0];
-									$scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0] = respo.results[1];
-								}
-									//check for slot 1 and slot 2//
-									else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0]) == 0){
-										$scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0] = respo.results[0];
-										$scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0] = respo.results[1];
-										
-									}
-									else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0]) == 0){
-										$scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0] = respo.results[0];
-										$scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0] = respo.results[1];
-										
-									}
-									else{
-										console.log("No slot avalaible for CORE and CORE"+respo.results[0].courseCode+respo.results[1].courseCode);
-									}
-						}
-						else if((respo.results[0].courseType=='CORE' && respo.results[1].courseType!='CORE')){
-							//check for slot 5 and slot 6//
-							if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"])) && (($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0].courseType) != 'CORE' | ($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0].courseType) == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot6"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot5"][0] = respo.results[0];
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot6"][p] = respo.results[1];
-										break;
-									}
-								}
-
-							}
-							else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"])) && (($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0]) != 'CORE' | ($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0].courseType) == undefined)){
-					
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot5"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][p] == 0){
-										$scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0] = respo.results[0];
-										$scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][p] = respo.results[1];
-										break;
-									}
-								
-								}
-							}
-								//check for slot 3 and slot 4//
-							else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"])) && (($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0]) != 'CORE' | ($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0].courseType) == undefined)){
-									
-									for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot4"].length;p++){
-										if($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][p] == 0){
-											$scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0] = respo.results[0];
-											$scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][p] = respo.results[1];
-											break;
-										}
-									}
-								}
-							else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"])) && (($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0].courseType) != 'CORE' | ($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0].courseType) == undefined)){
-									
-									for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot3"].length;p++){
-										if($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][p] == 0){
-											$scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0] = respo.results[0];
-											$scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][p] = respo.results[1];
-											break;
-										}
-									}
-								}
-									//check for slot 1 and slot 2//
-							else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"])) && (($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0].courseType) != 'CORE' | ($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0].courseType) == undefined)){
-										
-									for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot2"].length;p++){
-										if($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][p] == 0){
-											$scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0] = respo.results[0];
-											$scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][p] = respo.results[1];
-											break;
-										}
-									}
-							}
-							else if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0]) == 0 && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"])) && (($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0].courseType) != 'CORE' | ($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0].courseType) == undefined)){
-										
-									for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot1"].length;p++){
-										if($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][p] == 0){
-											$scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0] = respo.results[0];
-											$scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][p] = respo.results[1];
-											break;
-										}
-									}
+					if(respo.results.length==3){
+						if(respo.results[0].courseCode==respo.results[1].courseCode){
+							$scope.profhassamecourse(respo.results[0],respo.results[1]);
+							
+							if(respo.results[2].courseType=='CORE'){
+								$scope.addcore(respo.results[2]);
 							}
 							else{
-									console.log("No slot is avalaible for CORE AND NOTCORE"+respo.results[0].courseCode+respo.results[1].courseCode);
+								$scope.addother(respo.results[2]);
+							}
+
+						}
+						else if(respo.results[1].courseCode==respo.results[2].courseCode){
+							$scope.profhassamecourse(respo.results[1],respo.results[2]);
+
+							if(respo.results[0].courseType=='CORE'){
+								$scope.addcore(respo.results[0]);
+							}
+							else{
+								$scope.addother(respo.results[0]);
+							}
+
+						}
+						else if(respo.results[0].courseCode!=respo.results[2].courseCode){
+							$scope.profhassamecourse(respo.results[0],respo.results[2]);
+
+							if(respo.results[1].courseType=='CORE'){
+								$scope.addcore(respo.results[1]);
+							}
+							else{
+								$scope.addother(respo.results[1]);
 							}
 						}
-						else if(respo.results[0].courseType!='CORE' && respo.results[1].courseType=='CORE'){
-							console.log("NOT CORE and CORE"+respo.results[0].profShortName+" "+respo.results[1].profShortName);
-
-							//check for slot 5 and slot 6//
-							if(($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0]) == 0 && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"])) && (($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0].courseType) != 'CORE' | ($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0].courseType) == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][p] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot5"][0] = respo.results[1];
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot6"][p] = respo.results[0];
-										break;
-									}
-								}
-							}
-							else if(($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0]) == 0 && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"])) && (($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0]) != 'CORE' | ($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0].courseType) == undefined)){
-					
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][p] == 0){
-										$scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0] = respo.results[1];
-										$scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][p] = respo.results[0];
-										break;
-									}
-								}
-							}
-								//check for slot 3 and slot 4//
-							else if(($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0]) == 0 && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"])) && (($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0]) != 'CORE' | ($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0].courseType) == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot4"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][p] == 0){
-										$scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0] = respo.results[1];
-										$scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][p] = respo.results[0];
-										break;
-									}
-								}
-							}
-							else if(($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0]) == 0 && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"])) && (($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0].courseType) != 'CORE' | ($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0].courseType) == undefined)){
-									
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot3"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][p] == 0){
-										$scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0] = respo.results[1];
-										$scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][p] = respo.results[0];
-										break;
-									}
-								}
-							}
-									//check for slot 1 and slot 2//
-							else if(($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0]) == 0 && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"])) && (($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0].courseType) != 'CORE' | ($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0].courseType) == undefined)){
-										
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot2"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][p] == 0){
-										$scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0] = respo.results[1];
-											$scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][p] = respo.results[0];
-											break;
-										}
-									}
-								}
-							else if(($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0]) == 0 && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"])) && (($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0].courseType) != 'CORE' | ($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0].courseType) == undefined)){
-										
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot1"].length;p++){
-										if($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][p] == 0){
-											$scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0] = respo.results[1];
-											$scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][p] = respo.results[0];
-											break;
-										}
-									}
-								}
-								else{
-									console.log("No slot is avalaible for CORE AND NOTCORE"+respo.results[0].courseCode+respo.results[1].courseCode);
-								}		
-							}
-
-							else if(respo.results[0].courseType!='CORE' && respo.results[1].courseType!='CORE'){	
-							
-							console.log("NOT CORE and NOT CORE"+respo.results[0].profShortName+" "+respo.results[1].profShortName);
-
-							//check for slot 5 and slot 6//
-							if(($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0].courseType != 'CORE'  | $scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0].courseType == undefined) && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"]))&& ($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"])) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0].courseType != 'CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot5"][p] = respo.results[0];
-										break;
-									}
-									if(p==$scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length-1){
-										console.log("slot 5 is full: ");
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot6"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot6"][q] = respo.results[1];
-										break;
-									}
-									if(q==$scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length-1){
-										console.log("slot 6 is full: "+respo.results[0].courseCode+" "+respo.results[0].profShortName);
-									}
-								}
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0].courseType != 'CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0].courseType == undefined) && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"]))&& ($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"])) &&($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0].courseType != 'CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0].courseType == undefined) ){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot6"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot5"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot5"][q] = respo.results[1];
-										break;
-									}
-								}
-							}
-								//check for slot 3 and slot 4//
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0].courseType != 'CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0].courseType == undefined) && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"])) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"])) &&($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0].courseType != 'CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0].courseType == undefined) ){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot3"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot3"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot4"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot4"][q] = respo.results[1];
-										break;
-									}
-								}
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0].courseType != 'CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0].courseType == undefined) && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"]))&& ($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"])) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0].courseType != 'CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0].courseType == undefined) ){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot4"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot4"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot3"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot3"][q] = respo.results[1];
-										break;
-									}
-								}
-								
-							}
-									//check for slot 1 and slot 2//
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0].courseType != 'CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0].courseType == undefined) && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"])) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"])) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0].courseType != 'CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0].courseType == undefined) ){
-								
-									for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot1"].length;p++){
-											if($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][p] == 0){
-												$scope.slot[ respo.results[0].field+respo.results[0].year]["slot1"][p] = respo.results[0];
-												break;
-											}
-										}
-
-										for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot2"].length;q++){
-											if($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][q] == 0){
-												$scope.slot[ respo.results[1].field+respo.results[1].year]["slot2"][q] = respo.results[1];
-												break;
-											}
-										}
-										
-									}	
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0].courseType != 'CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0].courseType == undefined) && ($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"])) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"])) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0].courseType != 'CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0].courseType == undefined) ){
-								
-										for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot2"].length;p++){
-											if($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][p] == 0){
-												$scope.slot[ respo.results[0].field+respo.results[0].year]["slot2"][p] = respo.results[0];
-												break;
-											}
-										}
-
-										for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot1"].length;q++){
-											if($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][q] == 0){
-												$scope.slot[ respo.results[1].field+respo.results[1].year]["slot1"][q] = respo.results[1];
-												break;
-											}
-										}
-										
-							}	
-						}
+					}
+					else if(respo.results.length==2 && respo.results[0].courseCode!=respo.results[1].courseCode){
+						$scope.profhasdiffrentcourse(respo.results[0],respo.results[1]);
 					}
 					else if(respo.results.length==2 && respo.results[0].courseCode==respo.results[1].courseCode){
-							console.log("CourseCode: "+respo.results[0].courseCode+" "+respo.results[1].courseCode);
-							console.log("Prof Name: "+respo.results[0].profShortName+" "+respo.results[1].profShortName);
-
-						if(respo.results[0].courseType=='CORE' && respo.results[1].courseType=='CORE'){
-							if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot7"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot7"][0]== 0){
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot7"][0] = respo.results[0];
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot7"][0] = respo.results[1];
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0]== 0){
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot6"][0] = respo.results[0];
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot6"][0] = respo.results[1];
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0]== 0){
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot5"][0] = respo.results[0];
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot5"][0] = respo.results[1];
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0]== 0){
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot4"][0] = respo.results[0];
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot4"][0] = respo.results[1];
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0]== 0){
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot3"][0] = respo.results[0];
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot3"][0] = respo.results[1];
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0]== 0){
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot2"][0] = respo.results[0];
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot2"][0] = respo.results[1];
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0]== 0){
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot1"][0] = respo.results[0];
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot1"][0] = respo.results[1];
-							}
-							else{
-								console.log("No slot avalaible for course offered for both field:s");
-							}
-						}
-						else if(respo.results[0].courseType=='CORE' && respo.results[1].courseType!='CORE'){
-							if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot7"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot7"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot7"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot7"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot7"][0].courseType == undefined) ){
-								
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot7"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot7"][p] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot7"][p] = respo.results[1];
-										break;
-									}
-								}
-
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot7"][0] = respo.results[0];
-								
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot6"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot6"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][p] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot6"][p] = respo.results[1];
-										break;
-									}
-								}
-
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot6"][0] = respo.results[0];
-							
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot5"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0].courseType == undefined) ){
-								
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot5"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][p] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot5"][p] = respo.results[1];
-										break;
-									}
-								}
-
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot5"][0] = respo.results[0];
-								
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot4"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0].courseType == undefined) ){
-								
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot4"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][p] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot4"][p] = respo.results[1];
-										break;
-									}
-								}
-
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot4"][0] = respo.results[0];
-								
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot3"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0].courseType == undefined) ){
-								
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot3"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][p] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot3"][p] = respo.results[1];
-										break;
-									}
-								}
-
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot3"][0] = respo.results[0];
-
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot2"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot2"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][p] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot2"][p] = respo.results[1];
-										break;
-									}
-								}
-
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot2"][0] = respo.results[0];
-
-							}
-							else if( $scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0] == 0 && $scope.slot[respo.results[1].field+respo.results[1].year]["slot1"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0].courseType == undefined) ){
-								
-								for(var p=0;p<$scope.slot[respo.results[1].field+respo.results[1].year]["slot1"].length;p++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][p] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot1"][p] = respo.results[1];
-										break;
-									}
-								}
-
-								$scope.slot[ respo.results[0].field+respo.results[0].year]["slot1"][0] = respo.results[0];
-
-							}
-							else{
-								console.log("No slot avalaible for course offered for both field:s");
-							}
-						}
-						else if(respo.results[0].courseType!='CORE' && respo.results[1].courseType=='CORE'){
-							if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot7"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot7"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot7"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot7"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot7"][0]== 0){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot7"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot7"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot1"][p] = respo.results[0];
-										break;
-									}
-								}
-								
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot7"][0] = respo.results[1];
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0]== 0){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot6"][p] = respo.results[0];
-										break;
-									}
-								}
-								
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot6"][0] = respo.results[1];
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0]== 0){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot5"][p] = respo.results[0];
-										break;
-									}
-								}
-								
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot5"][0] = respo.results[1];
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot4"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0]== 0){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot4"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot4"][p] = respo.results[0];
-										break;
-									}
-								}
-								
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot4"][0] = respo.results[1];
-
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot3"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0]== 0){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot3"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot3"][p] = respo.results[0];
-										break;
-									}
-								}
-								
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot3"][0] = respo.results[1];
-
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot2"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0]== 0){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot2"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot2"][p] = respo.results[0];
-										break;
-									}
-								}
-								
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot2"][0] = respo.results[1];
-							
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot1"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0]== 0){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot1"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot1"][p] = respo.results[0];
-										break;
-									}
-								}
-								
-								$scope.slot[ respo.results[1].field+respo.results[1].year]["slot1"][0] = respo.results[1];
-							
-							}
-							else{
-								console.log("No slot avalaible for course offered for both field:s");
-							}
-						}
-						else if(respo.results[0].courseType!='CORE' && respo.results[1].courseType!='CORE'){
-							if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot7"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot7"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot7"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot7"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot7"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot7"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot7"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot7"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot7"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot7"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot7"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot7"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot7"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot7"][q] = respo.results[1];
-										break;
-									}
-								}
-
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot6"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot6"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot6"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot6"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot6"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot6"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot6"][q] = respo.results[1];
-										break;
-									}
-								}
-
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot5"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot5"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot5"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot5"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot5"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot5"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot5"][q] = respo.results[1];
-										break;
-									}
-								}
-
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot4"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot4"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot4"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot4"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot4"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot4"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot4"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot4"][q] = respo.results[1];
-										break;
-									}
-								}
-
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot3"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot3"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot3"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot3"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot3"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot3"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot3"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot3"][q] = respo.results[1];
-										break;
-									}
-								}
-
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot2"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot2"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot2"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot2"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot2"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot2"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot2"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot2"][q] = respo.results[1];
-										break;
-									}
-								}
-
-							}
-							else if( ($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0].courseType !='CORE' | $scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][0].courseType == undefined) && $scope.slot[respo.results[0].field+respo.results[0].year]["slot1"].length > $scope.minslot($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"]) && $scope.slot[respo.results[1].field+respo.results[1].year]["slot1"].length > $scope.minslot($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"]) && ($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0].courseType !='CORE' | $scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][0].courseType == undefined)){
-								
-								for(var p=0;p<$scope.slot[respo.results[0].field+respo.results[0].year]["slot1"].length;p++){
-									if($scope.slot[respo.results[0].field+respo.results[0].year]["slot1"][p] == 0){
-										$scope.slot[ respo.results[0].field+respo.results[0].year]["slot1"][p] = respo.results[0];
-										break;
-									}
-								}
-
-								for(var q=0;q<$scope.slot[respo.results[1].field+respo.results[1].year]["slot1"].length;q++){
-									if($scope.slot[respo.results[1].field+respo.results[1].year]["slot1"][q] == 0){
-										$scope.slot[ respo.results[1].field+respo.results[1].year]["slot1"][q] = respo.results[1];
-										break;
-									}
-								}
-
-							}
-							else{
-								console.log("No slot avalaible for course offered for both field:s");
-							}
-						}
-						else{
-							console.log("Complete all for: ");
-						}
-
-						//CORE CORE NOT CORE NOT CORE COMPLETE FOR PROF HAS TWO SUBJECT...
-
+						$scope.profhassamecourse(respo.results[0],respo.results[1]);
+					}
+					else{
+						console.log();
 					}
 				});		
-		}		
+			}		
 	});
 
 	///////////////////////////////.....................CORE COURSE.....................///////////////////////////
-	
 	$http.get("http://localhost:3000/home/prof/").success(function(response){			
 			var prof = {
 				results : response
 			}
+
+			prof.results = $scope.shuffle(prof.results);
 
 			for(var j = 0 ; j < prof.results.length ; j++){
 				var path = "http://localhost:3000/home/courseinfo/profShortName/"+prof.results[j].profShortName;
@@ -848,154 +387,142 @@ app.controller('slotclr',function($scope,$state,$http){
 					}
 
 					if(coreprof.results.length == 1 && coreprof.results[0].courseType=='CORE'){
-					/*	console.log("CORE COURSE");*/
-
-					console.log("length:  :"+$scope.minslot($scope.slot[coreprof.results[0].field+coreprof.results[0].year]["slot5"]));							
-						
-						if($scope.slot[coreprof.results[0].field+coreprof.results[0].year]["slot1"][0]==0){
-							$scope.slot[ coreprof.results[0].field+coreprof.results[0].year]["slot1"][0] = coreprof.results[0];
-						}
-						else if($scope.slot[coreprof.results[0].field+coreprof.results[0].year]["slot2"][0]==0){
-							$scope.slot[ coreprof.results[0].field+coreprof.results[0].year]["slot2"][0] = coreprof.results[0];
-						}
-						else if($scope.slot[coreprof.results[0].field+coreprof.results[0].year]["slot3"][0]==0){
-							$scope.slot[ coreprof.results[0].field+coreprof.results[0].year]["slot3"][0] = coreprof.results[0];
-						}
-						else if($scope.slot[coreprof.results[0].field+coreprof.results[0].year]["slot4"][0]==0){
-							$scope.slot[ coreprof.results[0].field+coreprof.results[0].year]["slot4"][0] = coreprof.results[0];
-						}
-						else if($scope.slot[coreprof.results[0].field+coreprof.results[0].year]["slot5"][0]==0){
-							$scope.slot[ coreprof.results[0].field+coreprof.results[0].year]["slot5"][0] = coreprof.results[0];
-						}
-						else if($scope.slot[coreprof.results[0].field+coreprof.results[0].year]["slot6"][0]==0){
-							$scope.slot[ coreprof.results[0].field+coreprof.results[0].year]["slot6"][0] = coreprof.results[0];
-						}
-						else if($scope.slot[coreprof.results[0].field+coreprof.results[0].year]["slot7"][0]==0){
-							$scope.slot[ coreprof.results[0].field+coreprof.results[0].year]["slot7"][0] = coreprof.results[0];
-						}else{
-							console.log("No slot avalaible for core: "+coreprof.results[0].courseCode);
-						}
-						
+						$scope.addcore(coreprof.results[0]);
 					}
 
 				});
 			}
 	});
 
-		///////////////////////////////.....................other COURSE.....................///////////////////////////
+	///////////////////////////////.....................other COURSE.....................///////////////////////////
 	
 	$http.get("http://localhost:3000/home/prof/").success(function(response){			
-			var othercourseprof = {
-				results : response
-			}
+		var othercourseprof = {
+			results : response
+		}
 
-			/*console.log(othercourseprof.results);*/
+		othercourseprof.results = $scope.shuffle(othercourseprof.results);
 
-			for(var k = 0 ; k < othercourseprof.results.length ; k++){
+		for(var k = 0 ; k < othercourseprof.results.length ; k++){
+			var path = "http://localhost:3000/home/courseinfo/profShortName/"+othercourseprof.results[k].profShortName;
+			
+			$http.get(path).success(function(response){
+				var otherprof = {
+					results : response
+				}
 				
-				var path = "http://localhost:3000/home/courseinfo/profShortName/"+othercourseprof.results[k].profShortName;
-				
-				$http.get(path).success(function(response){
-					var otherprof = {
-						results : response
-					}
-
-					if(otherprof.results.length == 1 && otherprof.results[0].courseType!='CORE'){			
-						
-						/*console.log(otherprof.results[0].field+otherprof.results[0].year);*/
-
-						//..............slot1 length...........//////
-						if($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot1"][0].courseType!='CORE'){
-							var slot1len=$scope.minslot($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot1"]);
-						}
-						else{
-							var slot1len=10;
-						}
-
-						//..............slot2 length...........//////
-						if($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot2"][0].courseType!='CORE'){
-							var slot2len=$scope.minslot($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot2"]);
-						}
-						else{
-							var slot2len=10;
-						}
-
-						//..............slot3 length...........//////
-						if($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot3"][0].courseType!='CORE'){
-							var slot3len=$scope.minslot($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot3"]);
-						}
-						else{
-							var slot3len=10;
-						}
-
-						//..............slot4 length...........//////
-						if($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot4"][0].courseType!='CORE'){
-							var slot4len=$scope.minslot($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot4"]);
-						}
-						else{
-							var slot4len=10;
-						}
-
-						//..............slot5 length.........../////
-						if($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot5"][0].courseType!='CORE'){
-							var slot5len=$scope.minslot($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot5"]);
-						}
-						else{
-							var slot5len=10;
-						}
-
-
-						//..............slot6 length...........//////
-						if($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot6"][0].courseType!='CORE'){
-							var slot6len=$scope.minslot($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot6"]);
-						}
-						else{
-							var slot6len=10;
-						}
-						
-						//..............slot7 length...........//////
-						if($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot7"][0].courseType!='CORE'){
-							var slot7len=$scope.minslot($scope.slot[otherprof.results[0].field+otherprof.results[0].year]["slot7"]);
-						}
-						else{
-							var slot7len=10;
-						}
-
-						///////////...........put course in lowest size array.........///////////////
-
-						// console.log(slot1len+" "+slot2len+" "+slot3len+" "+slot4len+" "+slot5len+" "+slot6len+" "+slot7len);
-						var newminslotname =$scope.findminslotname(slot1len,slot2len,slot3len,slot4len,slot5len,slot6len,slot7len);
-						
-						for(var p=0;p<$scope.slot[otherprof.results[0].field+otherprof.results[0].year][newminslotname].length;p++){
-							if($scope.slot[otherprof.results[0].field+otherprof.results[0].year][newminslotname][p] == 0){
-								$scope.slot[ otherprof.results[0].field+otherprof.results[0].year][newminslotname][p] = otherprof.results[0];
-								break;
-							}
-							if(p==$scope.slot[otherprof.results[0].field+otherprof.results[0].year][newminslotname].length-1){
-								console.log("slot is full: "+otherprof.results[0].courseCode);
-							}
-						}
-
-					}
-				});
-
-			}
+				if(otherprof.results.length == 1 && otherprof.results[0].courseType!='CORE'){			
+					$scope.minumumlengthslot(otherprof.results[0]);
+					$scope.addother(otherprof.results[0]);
+				}
+			});
+		}
 	});
 
+	$scope.minumumlengthslot = function(argument1){
+		var slotlength = [];
+		var slotname = [];
+
+		//..............slot1 length...........//////
+		if($scope.slot[argument1.field+argument1.year]["slot1"][0].courseType!='CORE'){
+			var slot1len=$scope.minslot($scope.slot[argument1.field+argument1.year]["slot1"]);
+		}
+		else{
+			var slot1len=10;
+		}
+
+		//..............slot2 length...........//////
+		if($scope.slot[argument1.field+argument1.year]["slot2"][0].courseType!='CORE'){
+			var slot2len=$scope.minslot($scope.slot[argument1.field+argument1.year]["slot2"]);
+		}
+		else{
+			var slot2len=10;
+		}
+
+		//..............slot3 length...........//////
+		if($scope.slot[argument1.field+argument1.year]["slot3"][0].courseType!='CORE'){
+			var slot3len=$scope.minslot($scope.slot[argument1.field+argument1.year]["slot3"]);
+		}
+		else{
+			var slot3len=10;
+		}
+
+		//..............slot4 length...........//////
+		if($scope.slot[argument1.field+argument1.year]["slot4"][0].courseType!='CORE'){
+			var slot4len=$scope.minslot($scope.slot[argument1.field+argument1.year]["slot4"]);
+		}
+		else{
+			var slot4len=10;
+		}
+
+		//..............slot5 length.........../////
+		if($scope.slot[argument1.field+argument1.year]["slot5"][0].courseType!='CORE'){
+			var slot5len=$scope.minslot($scope.slot[argument1.field+argument1.year]["slot5"]);
+		}
+		else{
+			var slot5len=10;
+		}
+
+		//..............slot6 length...........//////
+		if($scope.slot[argument1.field+argument1.year]["slot6"][0].courseType!='CORE'){
+			var slot6len=$scope.minslot($scope.slot[argument1.field+argument1.year]["slot6"]);
+		}
+		else{
+			var slot6len=10;
+		}
+		
+		//..............slot7 length...........//////
+		if($scope.slot[argument1.field+argument1.year]["slot7"][0].courseType!='CORE'){
+			var slot7len=$scope.minslot($scope.slot[argument1.field+argument1.year]["slot7"]);
+		}
+		else{
+			var slot7len=10;
+		}
+
+		slotlength[0]=slot1len;slotlength[1]=slot2len;slotlength[2]=slot3len;slotlength[3]=slot4len;slotlength[4]=slot5len;slotlength[5]=slot6len;slotlength[6]=slot7len;
+		slotname[0]="slot1";slotname[1]="slot2";slotname[2]="slot3";slotname[3]="slot4";slotname[4]="slot5";slotname[5]="slot6";slotname[6]="slot7";
+
+		for (var i = 0; i < slotlength.length; i++) {
+    		for (var j = 0; j < (slotlength.length - i - 1); j++) {
+  	 		 	if(slotlength[j] < slotlength[j+1]) {
+        			
+      			}
+      			else{
+      				var tmp = slotlength[j];
+       				slotlength[j] = slotlength[j+1];
+        			slotlength[j+1] = tmp;
+
+        			var tmp1 = slotname[j];
+       				slotname[j] = slotname[j+1];
+        			slotname[j+1] = tmp1;
+      			}
+    		}        
+  		}
+		/*console.log(slotname);
+		console.log(slotlength);*/
+		return [slotname,slotlength];
+	}
+
+	$scope.addtoperticularslot = function(args1,slotname){
+		if(args1.courseType!='CORE'){
+			$scope.slot[args1.field+args1.year][slotname][$scope.minslot($scope.slot[args1.field+args1.year][slotname])] = args1;
+		}
+		else{
+			console.log("can't adddd");
+		}
+	}
+
 	$scope.minslot = function(parag){
-		/*	console.log("hihihihihi "+parag[0].courseCode+" "+parag.length);*/
-			var length=0;
-			for(var t=0;t<parag.length;t++){
-				if(parag[t].courseType!=undefined){
-					length++;
-				}
+		var length=0;
+		for(var t=0;t<parag.length;t++){
+			if(parag[t]!=0){
+				length++;
 			}
-			return length;
+		}
+		return length;
 	};
 
 	$scope.findminslotname = function(l1,l2,l3,l4,l5,l6,l7){
-		/*console.log(l1,l2,l3,l4,l5,l6,l7);*/
-
 		var minslot=10;
 		var minslotname;
 
@@ -1031,7 +558,412 @@ app.controller('slotclr',function($scope,$state,$http){
 		return minslotname;
 	};
 
+
+
+	$scope.shuffle = function(array){
+		 for (var i = array.length - 1; i > 0; i--) {
+      	  	var j = Math.floor(Math.random() * (i + 1));
+      	 	 var temp = array[i];
+      	 	 array[i] = array[j];
+       	 	array[j] = temp;
+   		 }
+    		return array;
+  	}
+
+
+	$scope.checkcourse = function(args1,args2){
+		if(args1.courseType=='CORECS'){
+			for(var i=0;i<args2.length;i++){
+				if(args2[i].courseType=='CORECS'){		
+					return 0;
+				}
+			}
+			return 1;
+		}/*
+		else if(args1.courseType=='COREALGO' | args1.courseType=='COREALGO' ){
+
+		}*/
+		else{
+			return 1;
+		}
+	}
+
+	$scope.addcore = function(coreprof){
+		if($scope.slot[coreprof.field+coreprof.year]["slot1"][0]==0){
+			$scope.slot[ coreprof.field+coreprof.year]["slot1"][0] = coreprof;
+		}
+		else if($scope.slot[coreprof.field+coreprof.year]["slot2"][0]==0){
+			$scope.slot[ coreprof.field+coreprof.year]["slot2"][0] = coreprof;
+		}
+		else if($scope.slot[coreprof.field+coreprof.year]["slot3"][0]==0){
+			$scope.slot[ coreprof.field+coreprof.year]["slot3"][0] = coreprof;
+		}
+		else if($scope.slot[coreprof.field+coreprof.year]["slot4"][0]==0){
+			$scope.slot[ coreprof.field+coreprof.year]["slot4"][0] = coreprof;
+		}
+		else if($scope.slot[coreprof.field+coreprof.year]["slot5"][0]==0){
+			$scope.slot[ coreprof.field+coreprof.year]["slot5"][0] = coreprof;
+		}
+		else if($scope.slot[coreprof.field+coreprof.year]["slot6"][0]==0){
+			$scope.slot[ coreprof.field+coreprof.year]["slot6"][0] = coreprof;
+		}
+		else if($scope.slot[coreprof.field+coreprof.year]["slot7"][0]==0){
+			$scope.slot[ coreprof.field+coreprof.year]["slot7"][0] = coreprof;
+		}else{
+			console.log("No slot avalaible for core: "+coreprof.courseCode);
+		}
+	};
+
+	$scope.addother = function(otherprof){
+		var temp1 = $scope.minumumlengthslot(otherprof);
+		
+		var slotname = temp1[0];
+		var slotlength = temp1[1];
+
+		if($scope.slot[otherprof.field+otherprof.year][slotname[0]][0].courseType!='CORE' && $scope.checkcourse(otherprof,$scope.slot[otherprof.field+otherprof.year][slotname[0]])){
+			$scope.slot[otherprof.field+otherprof.year][slotname[0]][$scope.minslot($scope.slot[otherprof.field+otherprof.year][slotname[0]])] = otherprof;
+		}
+		else if($scope.slot[otherprof.field+otherprof.year][slotname[1]][0].courseType!='CORE' && $scope.checkcourse(otherprof,$scope.slot[otherprof.field+otherprof.year][slotname[1]])){
+			$scope.slot[otherprof.field+otherprof.year][slotname[1]][$scope.minslot($scope.slot[otherprof.field+otherprof.year][slotname[1]])] = otherprof;
+		}
+		else if($scope.slot[otherprof.field+otherprof.year][slotname[2]][0].courseType!='CORE' && $scope.checkcourse(otherprof,$scope.slot[otherprof.field+otherprof.year][slotname[2]])){
+			$scope.slot[otherprof.field+otherprof.year][slotname[2]][$scope.minslot($scope.slot[otherprof.field+otherprof.year][slotname[2]])] = otherprof;
+		}
+		else if($scope.slot[otherprof.field+otherprof.year][slotname[3]][0].courseType!='CORE' && $scope.checkcourse(otherprof,$scope.slot[otherprof.field+otherprof.year][slotname[3]])){
+			$scope.slot[otherprof.field+otherprof.year][slotname[3]][$scope.minslot($scope.slot[otherprof.field+otherprof.year][slotname[3]])] = otherprof;
+		}
+		else if($scope.slot[otherprof.field+otherprof.year][slotname[4]][0].courseType!='CORE' && $scope.checkcourse(otherprof,$scope.slot[otherprof.field+otherprof.year][slotname[4]])){
+			$scope.slot[otherprof.field+otherprof.year][slotname[4]][$scope.minslot($scope.slot[otherprof.field+otherprof.year][slotname[4]])] = otherprof;
+		}
+		else if($scope.slot[otherprof.field+otherprof.year][slotname[5]][0].courseType!='CORE' && $scope.checkcourse(otherprof,$scope.slot[otherprof.field+otherprof.year][slotname[5]])){
+			$scope.slot[otherprof.field+otherprof.year][slotname[5]][$scope.minslot($scope.slot[otherprof.field+otherprof.year][slotname[5]])] = otherprof;
+		}
+		else if($scope.slot[otherprof.field+otherprof.year][slotname[6]][0].courseType!='CORE' && $scope.checkcourse(otherprof,$scope.slot[otherprof.field+otherprof.year][slotname[6]])){
+			$scope.slot[otherprof.field+otherprof.year][slotname[6]][$scope.minslot($scope.slot[otherprof.field+otherprof.year][slotname[6]])] = otherprof;
+		}
+		else{
+			console.log("can't add");
+		}
+	
+	}
+
+	$scope.profhasdiffrentcourse = function(response1,response2){
+		if(response1.courseType=='CORE' && response2.courseType=='CORE'){
+			//check for slot 1 and slot 2//
+			if(($scope.slot[response1.field+response1.year]["slot1"][0]) == 0 && ($scope.slot[response2.field+response2.year]["slot2"][0]) == 0){
+				$scope.slot[response1.field+response1.year]["slot1"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot2"][0] = response2;
+			}
+			else if(($scope.slot[response1.field+response1.year]["slot2"][0]) == 0 && ($scope.slot[response2.field+response2.year]["slot1"][0]) == 0){
+				$scope.slot[response1.field+response1.year]["slot2"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot1"][0] = response2;
+			}
+			//check for slot 3 and slot 4//
+			else if(($scope.slot[response1.field+response1.year]["slot3"][0]) == 0 && ($scope.slot[response2.field+response2.year]["slot4"][0]) == 0){
+				$scope.slot[response1.field+response1.year]["slot3"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot4"][0] = response2;
+			}
+			else if(($scope.slot[response1.field+response1.year]["slot4"][0]) == 0 && ($scope.slot[response2.field+response2.year]["slot3"][0]) == 0){
+				$scope.slot[response1.field+response1.year]["slot4"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot3"][0] = response2;
+			}
+			//check for slot 5 and slot 6//
+			else if(($scope.slot[response1.field+response1.year]["slot5"][0]) == 0 && ($scope.slot[response2.field+response2.year]["slot6"][0])==0){
+				$scope.slot[ response1.field+response1.year]["slot5"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot6"][0] = response2;
+			}
+			else if(($scope.slot[response1.field+response1.year]["slot6"][0]) == 0 && ($scope.slot[response2.field+response2.year]["slot5"][0]) == 0){
+				$scope.slot[response1.field+response1.year]["slot6"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot5"][0] = response2;
+			}
+			else{
+				console.log("No slot avalaible for CORE and CORE "+response1.courseCode+response2.courseCode);
+			}				
+		}
+		else if((response1.courseType=='CORE' && response2.courseType!='CORE')){
+			//check for slot 3 and slot 4//
+			if(($scope.slot[response1.field+response1.year]["slot3"][0]) == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot4"]) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot4"]) < $scope.slot[response2.field+response2.year]["slot4"].length) && (($scope.slot[response2.field+response2.year]["slot4"][0]) != 'CORE' | ($scope.slot[response2.field+response2.year]["slot4"][0].courseType) == undefined)){
+				$scope.slot[response1.field+response1.year]["slot3"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot4"][$scope.minslot($scope.slot[response2.field+response2.year]["slot4"])] = response2;			
+			}
+			else if(($scope.slot[response1.field+response1.year]["slot4"][0]) == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot3"]) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot3"]) < $scope.slot[response2.field+response2.year]["slot3"].length) && (($scope.slot[response2.field+response2.year]["slot3"][0].courseType) != 'CORE' | ($scope.slot[response2.field+response2.year]["slot3"][0].courseType) == undefined)){
+				$scope.slot[response1.field+response1.year]["slot4"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot3"][$scope.minslot($scope.slot[response2.field+response2.year]["slot3"])] = response2;
+			}
+			//check for slot 5 and slot 6//
+			else if(($scope.slot[response1.field+response1.year]["slot5"][0]) == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot6"]) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot6"]) < $scope.slot[response2.field+response2.year]["slot6"].length) && (($scope.slot[response2.field+response2.year]["slot6"][0].courseType) != 'CORE' | ($scope.slot[response2.field+response2.year]["slot6"][0].courseType) == undefined) ){
+				$scope.slot[ response1.field+response1.year]["slot5"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot6"][$scope.minslot($scope.slot[response2.field+response2.year]["slot6"])] = response2;
+			}
+			else if(($scope.slot[response1.field+response1.year]["slot6"][0]) == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot5"]) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot5"]) < $scope.slot[response2.field+response2.year]["slot5"].length) && (($scope.slot[response2.field+response2.year]["slot5"][0]) != 'CORE' | ($scope.slot[response2.field+response2.year]["slot5"][0].courseType) == undefined)){
+				$scope.slot[response1.field+response1.year]["slot6"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot5"][$scope.minslot($scope.slot[response2.field+response2.year]["slot5"])] = response2;
+			}
+			//check for slot 1 and slot 2//
+			else if(($scope.slot[response1.field+response1.year]["slot1"][0]) == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot2"]) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot2"]) < $scope.slot[response2.field+response2.year]["slot2"].length) && (($scope.slot[response2.field+response2.year]["slot2"][0].courseType) != 'CORE' | ($scope.slot[response2.field+response2.year]["slot2"][0].courseType) == undefined)){
+				$scope.slot[response1.field+response1.year]["slot1"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot2"][$scope.minslot($scope.slot[response2.field+response2.year]["slot2"])] = response2;
+			}
+			else if(($scope.slot[response1.field+response1.year]["slot2"][0]) == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot1"]) && ( $scope.minslot($scope.slot[response2.field+response2.year]["slot1"]) < $scope.slot[response2.field+response2.year]["slot1"].length) && (($scope.slot[response2.field+response2.year]["slot1"][0].courseType) != 'CORE' | ($scope.slot[response2.field+response2.year]["slot1"][0].courseType) == undefined)){
+				$scope.slot[response1.field+response1.year]["slot2"][0] = response1;
+				$scope.slot[response2.field+response2.year]["slot1"][$scope.minslot($scope.slot[response2.field+response2.year]["slot1"])] = response2;
+			}
+			else{
+				console.log("No slot is avalaible for CORE AND NOTCORE "+response1.courseCode+response2.courseCode);
+			}
+		}
+		else if(response1.courseType != 'CORE' && response2.courseType == 'CORE'){
+			//check for slot 3 and slot 4//
+			if(($scope.slot[response2.field+response2.year]["slot3"][0]) == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot4"]) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot4"]) < $scope.slot[response1.field+response1.year]["slot4"].length) && (($scope.slot[response1.field+response1.year]["slot4"][0]) != 'CORE' | ($scope.slot[response1.field+response1.year]["slot4"][0].courseType) == undefined)){
+				$scope.slot[response2.field+response2.year]["slot3"][0] = response2;
+				$scope.slot[response1.field+response1.year]["slot4"][$scope.minslot($scope.slot[response1.field+response1.year]["slot4"])] = response1;
+			}
+			else if(($scope.slot[response2.field+response2.year]["slot4"][0]) == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot3"]) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot3"]) < $scope.slot[response1.field+response1.year]["slot3"].length) && (($scope.slot[response1.field+response1.year]["slot3"][0].courseType) != 'CORE' | ($scope.slot[response1.field+response1.year]["slot3"][0].courseType) == undefined)){
+				$scope.slot[response2.field+response2.year]["slot4"][0] = response2;
+				$scope.slot[response1.field+response1.year]["slot3"][$scope.minslot($scope.slot[response1.field+response1.year]["slot3"])] = response1;
+			}
+			//check for slot 5 and slot 6//
+			else if(($scope.slot[response2.field+response2.year]["slot5"][0]) == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot6"]) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot6"]) < $scope.slot[response1.field+response1.year]["slot6"].length) && (($scope.slot[response1.field+response1.year]["slot6"][0].courseType) != 'CORE' | ($scope.slot[response1.field+response1.year]["slot6"][0].courseType) == undefined)){
+				$scope.slot[ response2.field+response2.year]["slot5"][0] = response2;
+				$scope.slot[ response1.field+response1.year]["slot6"][$scope.minslot($scope.slot[response1.field+response1.year]["slot6"])] = response1;
+			}
+			else if(($scope.slot[response2.field+response2.year]["slot6"][0]) == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot5"]) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot5"]) < $scope.slot[response1.field+response1.year]["slot5"].length) && (($scope.slot[response1.field+response1.year]["slot5"][0]) != 'CORE' | ($scope.slot[response1.field+response1.year]["slot5"][0].courseType) == undefined)){
+				$scope.slot[response2.field+response2.year]["slot6"][0] = response2;
+				$scope.slot[response1.field+response1.year]["slot5"][$scope.minslot($scope.slot[response1.field+response1.year]["slot5"])] = response1;
+			}
+			//check for slot 1 and slot 2//
+			else if(($scope.slot[response2.field+response2.year]["slot1"][0]) == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot2"]) && ( $scope.minslot($scope.slot[response1.field+response1.year]["slot2"]) < $scope.slot[response1.field+response1.year]["slot2"].length) && (($scope.slot[response1.field+response1.year]["slot2"][0].courseType) != 'CORE' | ($scope.slot[response1.field+response1.year]["slot2"][0].courseType) == undefined)){
+				$scope.slot[response2.field+response2.year]["slot1"][0] = response2;
+				$scope.slot[response1.field+response1.year]["slot2"][$scope.minslot($scope.slot[response1.field+response1.year]["slot2"])] = response1;
+			}
+			else if(($scope.slot[response2.field+response2.year]["slot2"][0]) == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot1"]) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot1"]) < $scope.slot[response1.field+response1.year]["slot1"].length) && (($scope.slot[response1.field+response1.year]["slot1"][0].courseType) != 'CORE' | ($scope.slot[response1.field+response1.year]["slot1"][0].courseType) == undefined)){
+				$scope.slot[response2.field+response2.year]["slot2"][0] = response2;
+				$scope.slot[response1.field+response1.year]["slot1"][$scope.minslot($scope.slot[response1.field+response1.year]["slot1"])] = response1;
+			}
+			else{
+				console.log("No slot is avalaible for CORE AND NOTCORE "+response1.courseCode+response2.courseCode);
+			}		
+		}
+		else if(response1.courseType!='CORE' && response2.courseType!='CORE'){
+			//check for slot 5 and slot 6//
+			if($scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot5"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot6"]) && ($scope.slot[response1.field+response1.year]["slot5"][0].courseType != 'CORE'  | $scope.slot[response1.field+response1.year]["slot5"][0].courseType == undefined) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot5"]) < $scope.slot[response1.field+response1.year]["slot5"].length) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot6"]) < $scope.slot[response2.field+response2.year]["slot6"].length) && ($scope.slot[response2.field+response2.year]["slot6"][0].courseType != 'CORE' | $scope.slot[response2.field+response2.year]["slot6"][0].courseType == undefined)){
+				$scope.slot[ response1.field+response1.year]["slot5"][$scope.minslot($scope.slot[response1.field+response1.year]["slot5"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot6"][$scope.minslot($scope.slot[response2.field+response2.year]["slot6"])] = response2;
+			}
+			else if($scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot6"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot5"]) && ($scope.slot[response1.field+response1.year]["slot6"][0].courseType != 'CORE' | $scope.slot[response1.field+response1.year]["slot6"][0].courseType == undefined) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot6"]) < $scope.slot[response1.field+response1.year]["slot6"].length)&& ($scope.minslot($scope.slot[response2.field+response2.year]["slot5"]) < $scope.slot[response2.field+response2.year]["slot5"].length) &&($scope.slot[response2.field+response2.year]["slot5"][0].courseType != 'CORE' | $scope.slot[response2.field+response2.year]["slot5"][0].courseType == undefined) ){
+				$scope.slot[ response1.field+response1.year]["slot6"][$scope.minslot($scope.slot[response1.field+response1.year]["slot6"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot5"][$scope.minslot($scope.slot[response2.field+response2.year]["slot5"])] = response2;
+			}
+			//check for slot 3 and slot 4//
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot3"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot4"]) && ($scope.slot[response1.field+response1.year]["slot3"][0].courseType != 'CORE' | $scope.slot[response1.field+response1.year]["slot3"][0].courseType == undefined) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot3"]) < $scope.slot[response1.field+response1.year]["slot3"].length) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot4"]) < $scope.slot[response2.field+response2.year]["slot4"].length) &&($scope.slot[response2.field+response2.year]["slot4"][0].courseType != 'CORE' | $scope.slot[response2.field+response2.year]["slot4"][0].courseType == undefined) ){
+				$scope.slot[ response1.field+response1.year]["slot3"][$scope.minslot($scope.slot[response1.field+response1.year]["slot3"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot4"][$scope.minslot($scope.slot[response2.field+response2.year]["slot4"])] = response2;
+			}
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot4"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot3"]) && ($scope.slot[response1.field+response1.year]["slot4"][0].courseType != 'CORE' | $scope.slot[response1.field+response1.year]["slot4"][0].courseType == undefined) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot4"]) < $scope.slot[response1.field+response1.year]["slot4"].length)&& ($scope.minslot($scope.slot[response2.field+response2.year]["slot3"]) < $scope.slot[response2.field+response2.year]["slot3"].length) && ($scope.slot[response2.field+response2.year]["slot3"][0].courseType != 'CORE' | $scope.slot[response2.field+response2.year]["slot3"][0].courseType == undefined) ){
+				$scope.slot[ response1.field+response1.year]["slot4"][$scope.minslot($scope.slot[response1.field+response1.year]["slot4"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot3"][$scope.minslot($scope.slot[response2.field+response2.year]["slot3"])] = response2;
+			}
+			//check for slot 1 and slot 2//
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot1"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot2"]) && ($scope.slot[response1.field+response1.year]["slot1"][0].courseType != 'CORE' | $scope.slot[response1.field+response1.year]["slot1"][0].courseType == undefined) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot1"]) < $scope.slot[response1.field+response1.year]["slot1"].length) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot2"]) < $scope.slot[response2.field+response2.year]["slot2"].length) && ($scope.slot[response2.field+response2.year]["slot2"][0].courseType != 'CORE' | $scope.slot[response2.field+response2.year]["slot2"][0].courseType == undefined) ){
+				$scope.slot[ response1.field+response1.year]["slot1"][$scope.minslot($scope.slot[response1.field+response1.year]["slot1"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot2"][$scope.minslot($scope.slot[response2.field+response2.year]["slot2"])] = response2;
+			}	
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot2"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot1"]) && ($scope.slot[response1.field+response1.year]["slot2"][0].courseType != 'CORE' | $scope.slot[response1.field+response1.year]["slot2"][0].courseType == undefined) && ($scope.minslot($scope.slot[response1.field+response1.year]["slot2"]) < $scope.slot[response1.field+response1.year]["slot2"].length) && ($scope.minslot($scope.slot[response2.field+response2.year]["slot1"]) < $scope.slot[response2.field+response2.year]["slot1"].length) && ($scope.slot[response2.field+response2.year]["slot1"][0].courseType != 'CORE' | $scope.slot[response2.field+response2.year]["slot1"][0].courseType == undefined) ){
+				$scope.slot[ response1.field+response1.year]["slot2"][$scope.minslot($scope.slot[response1.field+response1.year]["slot2"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot1"][$scope.minslot($scope.slot[response2.field+response2.year]["slot1"])] = response2;		
+			}
+			else{
+				console.log("No slot available for COURCS:");
+			}	
+		}
+	};
+
+	$scope.profhassamecourse = function(response1,response2){
+		if(response1.courseType=='CORE' && response2.courseType=='CORE'){
+			if( $scope.slot[response1.field+response1.year]["slot1"][0] == 0 && $scope.slot[response2.field+response2.year]["slot1"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot1"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot1"][0] = response2;
+			
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot2"][0] == 0 && $scope.slot[response2.field+response2.year]["slot2"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot2"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot2"][0] = response2;
+				
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot3"][0] == 0 && $scope.slot[response2.field+response2.year]["slot3"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot3"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot3"][0] = response2;
+				
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot4"][0] == 0 && $scope.slot[response2.field+response2.year]["slot4"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot4"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot4"][0] = response2;
+				
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot5"][0] == 0 && $scope.slot[response2.field+response2.year]["slot5"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot5"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot5"][0] = response2;
+				
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot6"][0] == 0 && $scope.slot[response2.field+response2.year]["slot6"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot6"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot6"][0] = response2;
+				
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot7"][0] == 0 && $scope.slot[response2.field+response2.year]["slot7"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot7"][0] = response1;
+				$scope.slot[ response2.field+response2.year]["slot7"][0] = response2;
+				
+			}
+			else{
+				console.log("No slot avalaible for course offered for both fields");
+			}
+		}
+		else if(response1.courseType=='CORE' && response2.courseType!='CORE'){
+			if( $scope.slot[response1.field+response1.year]["slot3"][0] == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot3"]) && $scope.minslot($scope.slot[response2.field+response2.year]["slot3"]) < $scope.slot[response2.field+response2.year]["slot3"].length && ($scope.slot[response2.field+response2.year]["slot3"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot3"][0].courseType == undefined) ){
+				$scope.slot[ response2.field+response2.year]["slot3"][$scope.minslot($scope.slot[response2.field+response2.year]["slot3"])] = response2;
+				$scope.slot[ response1.field+response1.year]["slot3"][0] = response1;
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot4"][0] == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot4"]) && $scope.minslot($scope.slot[response2.field+response2.year]["slot4"]) < $scope.slot[response2.field+response2.year]["slot4"].length && ($scope.slot[response2.field+response2.year]["slot4"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot4"][0].courseType == undefined) ){
+				$scope.slot[ response2.field+response2.year]["slot4"][$scope.minslot($scope.slot[response2.field+response2.year]["slot4"])] = response2;
+				$scope.slot[ response1.field+response1.year]["slot4"][0] = response1;
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot5"][0] == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot5"]) && $scope.minslot($scope.slot[response2.field+response2.year]["slot5"]) < $scope.slot[response2.field+response2.year]["slot5"].length && ($scope.slot[response2.field+response2.year]["slot5"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot5"][0].courseType == undefined) ){
+				$scope.slot[ response2.field+response2.year]["slot5"][$scope.minslot($scope.slot[response2.field+response2.year]["slot5"])] = response2;
+				$scope.slot[ response1.field+response1.year]["slot5"][0] = response1;
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot2"][0] == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot2"]) && $scope.minslot($scope.slot[response2.field+response2.year]["slot2"]) < $scope.slot[response2.field+response2.year]["slot2"].length && ($scope.slot[response2.field+response2.year]["slot2"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot2"][0].courseType == undefined)){
+				$scope.slot[ response2.field+response2.year]["slot2"][$scope.minslot($scope.slot[response2.field+response2.year]["slot2"])] = response2;
+				$scope.slot[ response1.field+response1.year]["slot2"][0] = response1;
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot1"][0] == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot1"]) && $scope.minslot($scope.slot[response2.field+response2.year]["slot1"]) < $scope.slot[response2.field+response2.year]["slot1"].length && ($scope.slot[response2.field+response2.year]["slot1"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot1"][0].courseType == undefined) ){
+				$scope.slot[ response2.field+response2.year]["slot1"][p$scope.minslot($scope.slot[response2.field+response2.year]["slot1"])] = response2;
+				$scope.slot[ response1.field+response1.year]["slot1"][0] = response1;
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot7"][0] == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot7"]) && $scope.minslot($scope.slot[response2.field+response2.year]["slot7"]) < $scope.slot[response2.field+response2.year]["slot7"].length && ($scope.slot[response2.field+response2.year]["slot7"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot7"][0].courseType == undefined) ){
+				$scope.slot[ response2.field+response2.year]["slot7"][$scope.minslot($scope.slot[response2.field+response2.year]["slot7"])] = response2;
+				$scope.slot[ response1.field+response1.year]["slot7"][0] = response1;
+			}
+			else if( $scope.slot[response1.field+response1.year]["slot6"][0] == 0 && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot6"]) && $scope.minslot($scope.slot[response2.field+response2.year]["slot6"]) < $scope.slot[response2.field+response2.year]["slot6"].length && ($scope.slot[response2.field+response2.year]["slot6"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot6"][0].courseType == undefined)){
+				$scope.slot[ response2.field+response2.year]["slot6"][$scope.minslot($scope.slot[response2.field+response2.year]["slot6"])] = response2;
+				$scope.slot[ response1.field+response1.year]["slot6"][0] = response1;	
+			}
+			else{
+				console.log("No slot avalaible for course offered for both field:s");
+			}
+		}
+		else if(response1.courseType != 'CORE' && response2.courseType == 'CORE'){
+			if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot7"]) && ($scope.slot[response1.field+response1.year]["slot7"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot7"][0].courseType == undefined) && $scope.minslot($scope.slot[response1.field+response1.year]["slot7"]) < $scope.slot[response1.field+response1.year]["slot7"].length && $scope.slot[response2.field+response2.year]["slot7"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot7"][$scope.minslot($scope.slot[response1.field+response1.year]["slot7"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot7"][0] = response2;
+			}
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot6"]) && ($scope.slot[response1.field+response1.year]["slot6"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot6"][0].courseType == undefined) && $scope.minslot($scope.slot[response1.field+response1.year]["slot6"]) < $scope.slot[response1.field+response1.year]["slot6"].length && $scope.slot[response2.field+response2.year]["slot6"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot6"][$scope.minslot($scope.slot[response1.field+response1.year]["slot6"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot6"][0] = response2;
+			}
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot5"]) && ($scope.slot[response1.field+response1.year]["slot5"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot5"][0].courseType == undefined) && $scope.minslot($scope.slot[response1.field+response1.year]["slot5"]) < $scope.slot[response1.field+response1.year]["slot5"].length && $scope.slot[response2.field+response2.year]["slot5"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot5"][$scope.minslot($scope.slot[response1.field+response1.year]["slot5"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot5"][0] = response2;
+			}
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot4"]) && ($scope.slot[response1.field+response1.year]["slot4"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot4"][0].courseType == undefined) && $scope.minslot($scope.slot[response1.field+response1.year]["slot4"]) < $scope.slot[response1.field+response1.year]["slot4"].length && $scope.slot[response2.field+response2.year]["slot4"][0]== 0){
+						
+				$scope.slot[ response1.field+response1.year]["slot4"][$scope.minslot($scope.slot[response1.field+response1.year]["slot4"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot4"][0] = response2;
+			}
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot3"]) && ($scope.slot[response1.field+response1.year]["slot3"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot3"][0].courseType == undefined) && $scope.minslot($scope.slot[response1.field+response1.year]["slot3"]) < $scope.slot[response1.field+response1.year]["slot3"].length && $scope.slot[response2.field+response2.year]["slot3"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot3"][$scope.minslot($scope.slot[response1.field+response1.year]["slot3"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot3"][0] = response2;
+			}
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot2"]) && ($scope.slot[response1.field+response1.year]["slot2"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot2"][0].courseType == undefined) && $scope.minslot($scope.slot[response1.field+response1.year]["slot2"]) < $scope.slot[response1.field+response1.year]["slot2"].length && $scope.slot[response2.field+response2.year]["slot2"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot2"][$scope.minslot($scope.slot[response1.field+response1.year]["slot2"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot2"][0] = response2;
+			}
+			else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot1"]) && ($scope.slot[response1.field+response1.year]["slot1"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot1"][0].courseType == undefined) && $scope.minslot($scope.slot[response1.field+response1.year]["slot1"]) < $scope.slot[response1.field+response1.year]["slot1"].length && $scope.slot[response2.field+response2.year]["slot1"][0]== 0){
+				$scope.slot[ response1.field+response1.year]["slot1"][$scope.minslot($scope.slot[response1.field+response1.year]["slot1"])] = response1;
+				$scope.slot[ response2.field+response2.year]["slot1"][0] = response2;
+			}
+			else{
+				console.log("No slot avalaible for course offered for both field:s");
+			}
+		}
+		else if(response1.courseType!='CORE' && response2.courseType!='CORE'){
+			var tem1= $scope.minumumlengthslot(response1);
+			var tem2 = $scope.minumumlengthslot(response2);
+
+			var slotname1=tem1[0];var slotname2=tem2[0];
+			var slotlength1=tem1[1];var slotlength2=tem2[1];
+			
+			if(slotname1[0]==slotname2[0] && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[0]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[0]])){
+				$scope.addtoperticularslot(response1,slotname1[0]);
+				$scope.addtoperticularslot(response2,slotname2[0]);
+			}
+			else if(slotlength1[0] == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[0]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[0]]) && ($scope.slot[response2.field+response2.year][slotname1[0]][0].courseType!='CORE' | $scope.slot[response2.field+response2.year][slotname1[0]][0].courseType == undefined ) && slotlength2[0]<$scope.slot[response2.field+response2.year][slotname1[0]].length){
+				$scope.addtoperticularslot(response1,slotname1[0]);
+				$scope.addtoperticularslot(response2,slotname1[0]);
+			}
+			else if(slotlength2[0] == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[0]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[0]]) && ($scope.slot[response1.field+response1.year][slotname2[0]][0].courseType!='CORE' | $scope.slot[response1.field+response1.year][slotname2[0]][0].courseType == undefined) && slotlength1[0]<$scope.slot[response1.field+response1.year][slotname2[0]].length){
+				$scope.addtoperticularslot(response1,slotname2[0]);
+				$scope.addtoperticularslot(response2,slotname2[0]);
+			}
+			else if(slotlength1[1] == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[1]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[1]]) && ($scope.slot[response2.field+response2.year][slotname1[1]][0].courseType!='CORE' | $scope.slot[response2.field+response2.year][slotname1[1]][0].courseType == undefined ) && slotlength2[1]<$scope.slot[response2.field+response2.year][slotname1[1]].length){
+				$scope.addtoperticularslot(response1,slotname1[1]);
+				$scope.addtoperticularslot(response2,slotname1[1]);
+			}
+			else if(slotlength2[1] == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[1]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[1]]) && ($scope.slot[response1.field+response1.year][slotname2[1]][0].courseType!='CORE' | $scope.slot[response1.field+response1.year][slotname2[1]][0].courseType == undefined) && slotlength1[1]<$scope.slot[response1.field+response1.year][slotname2[1]].length){
+				$scope.addtoperticularslot(response1,slotname2[1]);
+				$scope.addtoperticularslot(response2,slotname2[1]);
+			}
+			else if(slotlength1[2] == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[2]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[2]]) && ($scope.slot[response2.field+response2.year][slotname1[2]][0].courseType!='CORE' | $scope.slot[response2.field+response2.year][slotname1[2]][0].courseType == undefined ) && slotlength2[2]<$scope.slot[response2.field+response2.year][slotname1[2]].length){
+				$scope.addtoperticularslot(response1,slotname1[2]);
+				$scope.addtoperticularslot(response2,slotname1[2]);
+			}
+			else if(slotlength2[2] == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[2]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[2]]) && ($scope.slot[response1.field+response1.year][slotname2[2]][0].courseType!='CORE' | $scope.slot[response1.field+response1.year][slotname2[2]][0].courseType == undefined) && slotlength1[2]<$scope.slot[response1.field+response1.year][slotname2[2]].length){
+				$scope.addtoperticularslot(response1,slotname2[2]);
+				$scope.addtoperticularslot(response2,slotname2[2]);
+			}
+			else if(slotlength1[3] == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[3]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[3]]) && ($scope.slot[response2.field+response2.year][slotname1[3]][0].courseType!='CORE' | $scope.slot[response2.field+response2.year][slotname1[3]][0].courseType == undefined ) && slotlength2[3]<$scope.slot[response2.field+response2.year][slotname1[3]].length){
+				$scope.addtoperticularslot(response1,slotname1[3]);
+				$scope.addtoperticularslot(response2,slotname1[3]);
+			}
+			else if(slotlength2[3] == 0 && $scope.checkcourse(response1,$scope.slot[response1.field+response1.year][slotname1[3]]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year][slotname2[3]]) && ($scope.slot[response1.field+response1.year][slotname2[3]][0].courseType!='CORE' | $scope.slot[response1.field+response1.year][slotname2[3]][0].courseType == undefined) && slotlength1[3]<$scope.slot[response1.field+response1.year][slotname2[3]].length){
+				$scope.addtoperticularslot(response1,slotname2[3]);
+				$scope.addtoperticularslot(response2,slotname2[3]);
+			}
+			else{
+				if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot7"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot7"]) && ($scope.slot[response1.field+response1.year]["slot7"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot7"][0].courseType == undefined) && $scope.slot[response1.field+response1.year]["slot7"].length > $scope.minslot($scope.slot[response1.field+response1.year]["slot7"]) && $scope.slot[response2.field+response2.year]["slot7"].length > $scope.minslot($scope.slot[response2.field+response2.year]["slot7"]) && ($scope.slot[response2.field+response2.year]["slot7"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot7"][0].courseType == undefined)){					
+					$scope.slot[ response1.field+response1.year]["slot7"][$scope.minslot($scope.slot[response1.field+response1.year]["slot7"])] = response1;
+					$scope.slot[ response2.field+response2.year]["slot7"][$scope.minslot($scope.slot[response2.field+response2.year]["slot7"])] = response2;			
+				}
+				else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot6"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot6"]) && ($scope.slot[response1.field+response1.year]["slot6"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot6"][0].courseType == undefined) && $scope.slot[response1.field+response1.year]["slot6"].length > $scope.minslot($scope.slot[response1.field+response1.year]["slot6"]) && $scope.slot[response2.field+response2.year]["slot6"].length > $scope.minslot($scope.slot[response2.field+response2.year]["slot6"]) && ($scope.slot[response2.field+response2.year]["slot6"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot6"][0].courseType == undefined)){
+					$scope.slot[ response1.field+response1.year]["slot6"][$scope.minslot($scope.slot[response1.field+response1.year]["slot6"])] = response1;
+					$scope.slot[ response2.field+response2.year]["slot6"][$scope.minslot($scope.slot[response2.field+response2.year]["slot6"])] = response2;
+				}
+				else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot5"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot5"]) && ($scope.slot[response1.field+response1.year]["slot5"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot5"][0].courseType == undefined) && $scope.slot[response1.field+response1.year]["slot5"].length > $scope.minslot($scope.slot[response1.field+response1.year]["slot5"]) && $scope.slot[response2.field+response2.year]["slot5"].length > $scope.minslot($scope.slot[response2.field+response2.year]["slot5"]) && ($scope.slot[response2.field+response2.year]["slot5"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot5"][0].courseType == undefined)){
+					$scope.slot[ response1.field+response1.year]["slot5"][$scope.minslot($scope.slot[response1.field+response1.year]["slot5"])] = response1;
+					$scope.slot[ response2.field+response2.year]["slot5"][$scope.minslot($scope.slot[response2.field+response2.year]["slot5"])] = response2;
+				}
+				else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot4"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot4"]) && ($scope.slot[response1.field+response1.year]["slot4"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot4"][0].courseType == undefined) && $scope.slot[response1.field+response1.year]["slot4"].length > $scope.minslot($scope.slot[response1.field+response1.year]["slot4"]) && $scope.slot[response2.field+response2.year]["slot4"].length > $scope.minslot($scope.slot[response2.field+response2.year]["slot4"]) && ($scope.slot[response2.field+response2.year]["slot4"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot4"][0].courseType == undefined)){
+					$scope.slot[ response1.field+response1.year]["slot4"][$scope.minslot($scope.slot[response1.field+response1.year]["slot4"])] = response1;
+					$scope.slot[ response2.field+response2.year]["slot4"][$scope.minslot($scope.slot[response2.field+response2.year]["slot4"])] = response2;
+				}
+				else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot3"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot3"]) && ($scope.slot[response1.field+response1.year]["slot3"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot3"][0].courseType == undefined) && $scope.slot[response1.field+response1.year]["slot3"].length > $scope.minslot($scope.slot[response1.field+response1.year]["slot3"]) && $scope.slot[response2.field+response2.year]["slot3"].length > $scope.minslot($scope.slot[response2.field+response2.year]["slot3"]) && ($scope.slot[response2.field+response2.year]["slot3"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot3"][0].courseType == undefined)){
+					$scope.slot[ response1.field+response1.year]["slot3"][$scope.minslot($scope.slot[response1.field+response1.year]["slot3"])] = response1;
+					$scope.slot[ response2.field+response2.year]["slot3"][$scope.minslot($scope.slot[response2.field+response2.year]["slot3"])] = response2;
+				}
+				else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot2"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot2"]) && ($scope.slot[response1.field+response1.year]["slot2"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot2"][0].courseType == undefined) && $scope.slot[response1.field+response1.year]["slot2"].length > $scope.minslot($scope.slot[response1.field+response1.year]["slot2"]) && $scope.slot[response2.field+response2.year]["slot2"].length > $scope.minslot($scope.slot[response2.field+response2.year]["slot2"]) && ($scope.slot[response2.field+response2.year]["slot2"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot2"][0].courseType == undefined)){
+					$scope.slot[ response1.field+response1.year]["slot2"][$scope.minslot($scope.slot[response1.field+response1.year]["slot2"])] = response1;
+					$scope.slot[ response2.field+response2.year]["slot2"][$scope.minslot($scope.slot[response2.field+response2.year]["slot2"])] = response2;
+				}
+				else if( $scope.checkcourse(response1,$scope.slot[response1.field+response1.year]["slot1"]) && $scope.checkcourse(response2,$scope.slot[response2.field+response2.year]["slot1"]) && ($scope.slot[response1.field+response1.year]["slot1"][0].courseType !='CORE' | $scope.slot[response1.field+response1.year]["slot1"][0].courseType == undefined) && $scope.slot[response1.field+response1.year]["slot1"].length > $scope.minslot($scope.slot[response1.field+response1.year]["slot1"]) && $scope.slot[response2.field+response2.year]["slot1"].length > $scope.minslot($scope.slot[response2.field+response2.year]["slot1"]) && ($scope.slot[response2.field+response2.year]["slot1"][0].courseType !='CORE' | $scope.slot[response2.field+response2.year]["slot1"][0].courseType == undefined)){
+					$scope.slot[ response1.field+response1.year]["slot1"][$scope.minslot($scope.slot[response1.field+response1.year]["slot1"])] = response1;
+					$scope.slot[ response2.field+response2.year]["slot1"][$scope.minslot($scope.slot[response2.field+response2.year]["slot1"])] = response2;
+				}
+			}
+		}
+	};
+
 	$scope.next = function(){
 			$state.go('home');
 	};
+
 });

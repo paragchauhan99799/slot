@@ -1,0 +1,335 @@
+/* alternate colors */
+/* corner values for bubble up and down */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400);
+.blue {
+  background: #3498db;
+}
+
+.purple {
+  background: #9b59b6;
+}
+
+.navy {
+  background: #34495e;
+}
+
+.green {
+  background: #2ecc71;
+}
+
+.red {
+  background: #e74c3c;
+}
+
+.orange {
+  background: #f39c12;
+}
+
+.cs335, .cs426, .md303, .md352, .md313, .cs240 {
+  font-weight: 300;
+  cursor: pointer;
+}
+
+body {
+  
+  padding: 20px;
+}
+
+
+
+*, *:before, *:after {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+h1{
+  font-size: 35px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+table {
+  font-family: 'Open Sans', Helvetica;
+  color: black;
+}
+table tr:nth-child(2n) {
+  background: #eff0f1;
+}
+table tr:nth-child(2n+3) {
+  background: #fff;
+}
+table th, table td {
+  padding: 1em;
+  width: 10em;
+}
+
+.days, .time {
+  background: #34495e;
+  text-transform: uppercase;
+  font-size: 0.6em;
+  text-align: center;
+}
+
+.time {
+  width: 3em !important;
+}
+
+/* Add this attribute to the element that needs a tooltip */
+[data-tooltip] {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* Hide the tooltip content by default */
+[data-tooltip]:before,
+[data-tooltip]:after {
+  visibility: hidden;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  pointer-events: none;
+  -moz-transition: ease 0.5s all;
+  -o-transition: ease 0.5s all;
+  -webkit-transition: ease 0.5s all;
+  transition: ease 0.5s all;
+}
+
+/* Position tooltip above the element */
+[data-tooltip]:before {
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  margin-bottom: 5px;
+  margin-left: -80px;
+  padding: 7px;
+  width: 160px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  background-color: black;
+  color: #fff;
+  content: attr(data-tooltip);
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Triangle hack to make tooltip look like a speech bubble */
+[data-tooltip]:after {
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  margin-left: -5px;
+  width: 0;
+  border-top: 5px solid black;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  content: " ";
+  font-size: 0;
+  line-height: 0;
+}
+
+/* Show tooltip content on hover */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+  visibility: visible;
+  bottom: 90%;
+  filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+  opacity: 1;
+}
+
+body::before {
+  display: none;
+  
+}
+button{
+  margin:auto;
+  display:block;
+}
+.typ-subhed {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+/* lets create a container and put it in the middle */
+.container {
+  height: 100%;
+  width: 50%;
+  margin: auto;
+}
+.container > * {
+  width: 100%;
+}
+.ctrl-standard.fx-bubbleDown {
+  color: #f0b81f;
+  border-color: #f0b81f;
+}
+.ctrl-standard.fx-bubbleDown::after {
+  bottom: auto;
+  border-radius: 0 0 $right-val2 $left-val2/0 0 $right-val1 $left-val1;
+  background: #f0b81f;
+}
+.ctrl-standard.fx-bubbleDown.is-reversed::after {
+  height: 300%;
+}
+.ctrl-standard.fx-bubbleDown.is-reversed:hover {
+  color: #f0b81f;
+}
+.ctrl-standard.fx-bubbleDown.is-reversed:hover::after {
+  height: 0;
+}
+.ctrl-standard.fx-bubbleUp {
+  color: #9fa255;
+  border-color: #9fa255;
+}
+.ctrl-standard.fx-bubbleUp::after {
+  top: auto;
+  border-radius: $right-val1 $left-val1 0 0/$right-val2 $left-al2 0 0;
+  background: #9fa255;
+}
+.ctrl-standard.fx-bubbleUp.is-reversed::after {
+  height: 300%;
+}
+.ctrl-standard.fx-bubbleUp.is-reversed:hover {
+  color: #9fa255;
+}
+.ctrl-standard.fx-bubbleUp.is-reversed:hover::after {
+  height: 0;
+}
+.ctrl-standard.fx-sliderIn {
+  color: #81aaa4;
+  border-color: #81aaa4;
+}
+.ctrl-standard.fx-sliderIn::after {
+  background: #81aaa4;
+}
+.ctrl-standard.fx-sliderIn.is-reversed::after {
+  width: 300%;
+}
+.ctrl-standard.fx-sliderIn.is-reversed:hover {
+  color: #81aaa4;
+}
+.ctrl-standard.fx-sliderIn.is-reversed:hover::after {
+  width: 0;
+}
+[class*="ctrl-"] {
+  padding: 5ox 10px;
+  border-radius: 2px;
+  border: 1px solid #231f20;
+}
+[class*="ctrl-"][class*="fx-"]:hover,
+[class*="ctrl-"][class*="fx-"].active {
+  color: #231f20;
+}
+[class*="ctrl-"][class*="fx-"].is-reversed {
+  color: #231f20;
+}
+
+  [class*="fx-"],
+[class*="fx-"]:hover {
+    -webkit-transition: color 0.5s  ease-in-out;
+    transition: color 0.5s  ease-in-out;
+  }
+  [class*="fx-"]:not(.fx-dyna) {
+    position: relative;
+    z-index: 1;
+    -webkit-transition-delay: 0.2s !important;
+            transition-delay: 0.2s !important;
+    overflow: hidden;
+  }
+  [class*="fx-"]:not(.fx-dyna)::after,
+[class*="fx-"]:not(.fx-dyna)::before {
+    content: "";
+    display: block;
+    position: absolute;
+    z-index: -1;
+  }
+  [class*="fx-bubble"]::after {
+    -webkit-transition: height 0.5s ease-in-out;
+    transition: height 0.5s ease-in-out;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 0;
+    width: 100%;
+  }
+  [class*="fx-bubble"]:hover::after,
+[class*="fx-bubble"].active::after {
+    -webkit-transition: height 0.5s ease-in-out;
+    transition: height 0.5s ease-in-out;
+    height: 300%;
+  }
+  [class*="fx-bubble"]:disabled:hover::after {
+    height: 0;
+  }
+  .fx-sliderIn::after {
+    -webkit-transition: width 0.5s ease-in-out;
+    transition: width 0.5s ease-in-out;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 0;
+  }
+  .fx-sliderIn:hover::after,
+.fx-sliderIn.active::after {
+    -webkit-transition: width 0.5s ease-in-out;
+    transition: width 0.5s ease-in-out;
+    width: 100%;
+  }
+  :checked + .fx-sliderIn::after,
+.fx-sliderIn.active::after {
+    width: 300%;
+  }/*
+#row1 {
+  background-color: #F781F3;
+}
+
+#row2 {
+  background-color: #9F81F7;
+}
+
+#row3 {
+  background-color: #81DAF5;
+}
+
+#row4 {
+  background-color: #642EFE;
+}
+
+#row5 {
+  background-color: #F3F781;
+}
+
+#row6 {
+  background-color: red;
+}
+
+#row7 {
+  background-color: red;
+}
+
+#row8 {
+  background-color: red;
+}
+
+#row9 {
+  background-color: red;
+}
+
+#row10 {
+  background-color: red;
+}
+#row11 {
+  background-color: red;
+}
+#row12 {
+  background-color: red;
+}*/

@@ -33,8 +33,6 @@ exports.getspecificourseCode = function(req,res){
 		if(err)
 			res.send(err);
 
-
-
 			res.json(courseinfo);
 	});
 };
@@ -43,7 +41,6 @@ exports.getspecificprofShortName = function(req,res){
 	courseInfo.find({profShortName : req.params.profShortName },function(err,courseinfo){
 		if(err)
 			res.send(err);
-
 
 			res.json(courseinfo);
 	});
