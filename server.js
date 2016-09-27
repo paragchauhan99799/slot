@@ -10,7 +10,8 @@ var controllercourseInfo = require('./controller/courseInfo');
 var port=process.env.PORT || 3000
 var router = express.Router();
 
-var mongoURI = "mongodb://127.0.0.1:27017/slot";
+//var mongoURI = "mongodb://127.0.0.1:27017/slot";
+var mongoURI = "mongodb://201301085:201301085@ds059284.mlab.com:59284/slot";
 var MongoDB = mongoose.connect(mongoURI).connection;
 var http = require('http').Server(app);
 
